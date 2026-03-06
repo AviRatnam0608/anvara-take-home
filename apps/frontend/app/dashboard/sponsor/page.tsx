@@ -2,6 +2,8 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { getUserRole } from '@/lib/auth-helpers';
+import { getCampaigns } from '@/lib/api';
+import type { Campaign } from '@/lib/types';
 import { CampaignList } from './components/campaign-list';
 
 export default async function SponsorDashboard() {
@@ -19,6 +21,16 @@ export default async function SponsorDashboard() {
     redirect('/');
   }
 
+  // Fetch campaigns server-side — no client-side fetch needed
+  let campaigns: Campaign[] = [];
+  let error: string | null = null;
+
+  try {
+    campaigns = await getCampaigns(roleData.sponsorId);
+  } catch {
+    error = 'Failed to load campaigns';
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -26,7 +38,11 @@ export default async function SponsorDashboard() {
         {/* TODO: Add CreateCampaignButton here */}
       </div>
 
-      <CampaignList />
+      {error ? (
+        <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">{error}</div>
+      ) : (
+        <CampaignList campaigns={campaigns} />
+      )}
     </div>
   );
 }
