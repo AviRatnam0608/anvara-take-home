@@ -1,48 +1,80 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import request from 'supertest';
 
-// BONUS: Implement unit tests for API endpoints
-// You'll need to install supertest: pnpm add -D supertest @types/supertest
+// Mock Prisma before importing app
+const mockQueryRaw = vi.fn();
+vi.mock('./db.js', () => ({
+  prisma: {
+    $queryRaw: (...args: unknown[]) => mockQueryRaw(...args),
+    sponsor: { findUnique: vi.fn() },
+    publisher: { findUnique: vi.fn() },
+  },
+}));
 
-describe('Sponsorships API', () => {
-  // BONUS: Implement these tests
+// Mock Better Auth (imported by auth middleware via routes)
+vi.mock('./lib/auth.js', () => ({
+  auth: {
+    api: { getSession: vi.fn().mockResolvedValue(null) },
+  },
+}));
 
-  describe('GET /api/sponsorships', () => {
-    it.todo('returns an array of sponsorships');
-    // Example:
-    // it('returns an array of sponsorships', async () => {
-    //   const response = await request(app).get('/api/sponsorships');
-    //   expect(response.status).toBe(200);
-    //   expect(Array.isArray(response.body)).toBe(true);
-    // });
+const { default: app } = await import('./index.js');
 
-    it.todo('sponsorships have required fields');
+describe('GET /api/health', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('returns 200 with status "ok" when database is connected', async () => {
+    mockQueryRaw.mockResolvedValue([{ '?column?': 1 }]);
+
+    const res = await request(app).get('/api/health');
+
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe('ok');
+    expect(res.body.database).toBe('connected');
+    expect(res.body.timestamp).toBeDefined();
   });
 
-  describe('GET /api/sponsorships/:id', () => {
-    it.todo('returns a single sponsorship by ID');
+  it('returns 503 when database is disconnected', async () => {
+    mockQueryRaw.mockRejectedValue(new Error('Connection refused'));
 
-    it.todo('returns 404 for non-existent sponsorship');
+    const res = await request(app).get('/api/health');
+
+    expect(res.status).toBe(503);
+    expect(res.body.status).toBe('error');
+    expect(res.body.database).toBe('disconnected');
+  });
+});
+
+describe('Rate Limiting', () => {
+  it('includes rate-limit headers in responses', async () => {
+    mockQueryRaw.mockResolvedValue([{ '?column?': 1 }]);
+
+    const res = await request(app).get('/api/health');
+
+    // express-rate-limit with standardHeaders: 'draft-8' uses RateLimit header
+    const rateLimitHeader =
+      res.headers['ratelimit-limit'] ||
+      res.headers['ratelimit'] ||
+      res.headers['x-ratelimit-limit'];
+
+    expect(rateLimitHeader).toBeDefined();
+  });
+});
+
+describe('Protected routes without auth', () => {
+  it('returns 401 for unauthenticated campaigns request', async () => {
+    const res = await request(app).get('/api/campaigns');
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe('Not authenticated');
   });
 
-  describe('POST /api/sponsorships', () => {
-    it.todo('creates a new sponsorship');
-
-    it.todo('returns 400 for missing required fields');
+  it('returns 401 for unauthenticated ad-slots request', async () => {
+    const res = await request(app).get('/api/ad-slots');
+    expect(res.status).toBe(401);
   });
 
-  describe('PUT /api/sponsorships/:id', () => {
-    it.todo('updates an existing sponsorship');
-
-    it.todo('returns 404 for non-existent sponsorship');
-  });
-
-  describe('GET /api/health', () => {
-    it.todo('returns health status');
-    // Example:
-    // it('returns health status', async () => {
-    //   const response = await request(app).get('/api/health');
-    //   expect(response.status).toBe(200);
-    //   expect(response.body.status).toBe('ok');
-    // });
+  it('returns 401 for unauthenticated dashboard request', async () => {
+    const res = await request(app).get('/api/dashboard/stats');
+    expect(res.status).toBe(401);
   });
 });

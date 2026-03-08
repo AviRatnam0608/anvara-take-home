@@ -1,27 +1,91 @@
 import { type Request, type Response, type NextFunction } from 'express';
+import { auth } from './lib/auth.js';
+import { prisma } from './db.js';
 
-// TODO: Add sponsorId and publisherId to the user interface
-// These are needed to scope queries to the user's own data
 export interface AuthRequest extends Request {
   user?: {
     id: string;
     email: string;
     role: 'SPONSOR' | 'PUBLISHER';
-    // FIXME: Missing sponsorId and publisherId fields
+    sponsorId?: string;
+    publisherId?: string;
   };
 }
 
-// TODO: This middleware doesn't actually validate anything!
-// It should:
-// 1. Check for Authorization header or session cookie
-// 2. Validate the token/session
-// 3. Look up the user in the database
-// 4. Attach user info to req.user
-// 5. Return 401 if invalid
-export function authMiddleware(req: AuthRequest, res: Response, next: NextFunction): void {
-  // Better Auth will handle validation via headers
-  // This is a placeholder for protected routes
-  next();
+/**
+ * Authentication middleware — validates the Better Auth session cookie.
+ *
+ * 1. Converts Express headers to a Web Headers object (what getSession expects)
+ * 2. Calls auth.api.getSession() to validate the cookie against the database
+ * 3. If invalid → 401 Unauthorized
+ * 4. If valid → looks up the user's Sponsor/Publisher record to determine role
+ * 5. Attaches full user context to req.user
+ */
+export async function authMiddleware(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    // Convert Express headers to Web Headers for Better Auth
+    const headers = new Headers();
+    for (const [key, value] of Object.entries(req.headers)) {
+      if (typeof value === 'string') {
+        headers.set(key, value);
+      } else if (Array.isArray(value)) {
+        headers.set(key, value.join(', '));
+      }
+    }
+
+    const session = await auth.api.getSession({ headers });
+
+    if (!session?.user) {
+      res.status(401).json({ error: 'Not authenticated' });
+      return;
+    }
+
+    const userId = session.user.id;
+    const email = session.user.email;
+
+    // Determine if the user is a Sponsor or Publisher
+    const sponsor = await prisma.sponsor.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (sponsor) {
+      req.user = {
+        id: userId,
+        email,
+        role: 'SPONSOR',
+        sponsorId: sponsor.id,
+      };
+      next();
+      return;
+    }
+
+    const publisher = await prisma.publisher.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (publisher) {
+      req.user = {
+        id: userId,
+        email,
+        role: 'PUBLISHER',
+        publisherId: publisher.id,
+      };
+      next();
+      return;
+    }
+
+    // Valid session but no Sponsor/Publisher record — no role assigned
+    res.status(403).json({ error: 'No role assigned to this account' });
+  } catch (error) {
+    console.error('Auth middleware error:', error);
+    res.status(500).json({ error: 'Authentication failed' });
+  }
 }
 
 export function roleMiddleware(allowedRoles: Array<'SPONSOR' | 'PUBLISHER'>) {

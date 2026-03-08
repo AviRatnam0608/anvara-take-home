@@ -1,17 +1,24 @@
-import { Router, type Request, type Response, type IRouter } from 'express';
+import { type Response, type IRouter, Router } from 'express';
 import { prisma } from '../db.js';
 import { getParam } from '../utils/helpers.js';
+import type { AuthRequest } from '../auth.js';
 
 const router: IRouter = Router();
 
-// GET /api/ad-slots - List available ad slots
-router.get('/', async (req: Request, res: Response) => {
+// GET /api/ad-slots - List authenticated publisher's ad slots
+router.get('/', async (req: AuthRequest, res: Response) => {
   try {
-    const { publisherId, type, available } = req.query;
+    if (req.user!.role !== 'PUBLISHER' || !req.user!.publisherId) {
+      res.status(403).json({ error: 'Only publishers can access ad slots' });
+      return;
+    }
+
+    const { type, available } = req.query;
 
     const adSlots = await prisma.adSlot.findMany({
       where: {
-        ...(publisherId && { publisherId: getParam(publisherId) }),
+        // Scope to the authenticated publisher's ad slots only
+        publisherId: req.user!.publisherId,
         ...(type && {
           type: type as string as 'DISPLAY' | 'VIDEO' | 'NATIVE' | 'NEWSLETTER' | 'PODCAST',
         }),
@@ -31,12 +38,21 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/ad-slots/:id - Get single ad slot with details
-router.get('/:id', async (req: Request, res: Response) => {
+// GET /api/ad-slots/:id - Get single ad slot (must own it)
+router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
+    if (req.user!.role !== 'PUBLISHER' || !req.user!.publisherId) {
+      res.status(403).json({ error: 'Only publishers can access ad slots' });
+      return;
+    }
+
     const id = getParam(req.params.id);
-    const adSlot = await prisma.adSlot.findUnique({
-      where: { id },
+
+    const adSlot = await prisma.adSlot.findFirst({
+      where: {
+        id,
+        publisherId: req.user!.publisherId,
+      },
       include: {
         publisher: true,
         placements: {
@@ -59,29 +75,31 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/ad-slots - Create new ad slot
-router.post('/', async (req: Request, res: Response) => {
+// POST /api/ad-slots - Create new ad slot for authenticated publisher
+router.post('/', async (req: AuthRequest, res: Response) => {
   try {
-    const { name, description, type, basePrice, publisherId } = req.body;
+    if (req.user!.role !== 'PUBLISHER' || !req.user!.publisherId) {
+      res.status(403).json({ error: 'Only publishers can create ad slots' });
+      return;
+    }
 
-    if (!name || !type || !basePrice || !publisherId) {
+    const { name, description, type, basePrice } = req.body;
+
+    if (!name || !type || !basePrice) {
       res.status(400).json({
-        error: 'Name, type, basePrice, and publisherId are required',
+        error: 'Name, type, and basePrice are required',
       });
       return;
     }
 
-    // TODO: Add authentication middleware to verify user owns publisherId
-    // TODO: Validate that basePrice is positive
-    // TODO: Validate that 'type' is valid enum value
-
+    // Use the authenticated user's publisherId — never trust the request body
     const adSlot = await prisma.adSlot.create({
       data: {
         name,
         description,
         type,
         basePrice,
-        publisherId,
+        publisherId: req.user!.publisherId!,
       },
       include: {
         publisher: { select: { id: true, name: true } },
@@ -95,17 +113,16 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/ad-slots/:id/book - Book an ad slot (simplified booking flow)
-// This marks the slot as unavailable and creates a simple booking record
-router.post('/:id/book', async (req: Request, res: Response) => {
+// POST /api/ad-slots/:id/book - Book an ad slot (simplified booking flow, sponsors only)
+router.post('/:id/book', async (req: AuthRequest, res: Response) => {
   try {
-    const id = getParam(req.params.id);
-    const { sponsorId, message } = req.body;
-
-    if (!sponsorId) {
-      res.status(400).json({ error: 'sponsorId is required' });
+    if (req.user!.role !== 'SPONSOR') {
+      res.status(403).json({ error: 'Only sponsors can book ad slots' });
       return;
     }
+
+    const id = getParam(req.params.id);
+    const { message } = req.body;
 
     // Check if slot exists and is available
     const adSlot = await prisma.adSlot.findUnique({
@@ -132,9 +149,7 @@ router.post('/:id/book', async (req: Request, res: Response) => {
       },
     });
 
-    // In a real app, you'd create a Placement record here
-    // For now, we just mark it as booked
-    console.log(`Ad slot ${id} booked by sponsor ${sponsorId}. Message: ${message || 'None'}`);
+    console.log(`Ad slot ${id} booked by user ${req.user!.id}. Message: ${message || 'None'}`);
 
     res.json({
       success: true,
@@ -147,10 +162,25 @@ router.post('/:id/book', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/ad-slots/:id/unbook - Reset ad slot to available (for testing)
-router.post('/:id/unbook', async (req: Request, res: Response) => {
+// POST /api/ad-slots/:id/unbook - Reset ad slot to available (for testing, publishers only)
+router.post('/:id/unbook', async (req: AuthRequest, res: Response) => {
   try {
+    if (req.user!.role !== 'PUBLISHER' || !req.user!.publisherId) {
+      res.status(403).json({ error: 'Only publishers can unbook their ad slots' });
+      return;
+    }
+
     const id = getParam(req.params.id);
+
+    // Verify the authenticated publisher owns this ad slot
+    const adSlot = await prisma.adSlot.findFirst({
+      where: { id, publisherId: req.user!.publisherId },
+    });
+
+    if (!adSlot) {
+      res.status(404).json({ error: 'Ad slot not found' });
+      return;
+    }
 
     const updatedSlot = await prisma.adSlot.update({
       where: { id },
@@ -171,7 +201,7 @@ router.post('/:id/unbook', async (req: Request, res: Response) => {
   }
 });
 
-// TODO: Add PUT /api/ad-slots/:id endpoint
-// TODO: Add DELETE /api/ad-slots/:id endpoint
+// TODO: Add PUT /api/ad-slots/:id endpoint (Challenge 4)
+// TODO: Add DELETE /api/ad-slots/:id endpoint (Challenge 4)
 
 export default router;

@@ -36,6 +36,23 @@ Detailed write-ups are in per-challenge files. Summaries are below.
 
 ---
 
-## Challenges 3–5
+## [Challenge 3: Secure API Endpoints](changes/03-api-security.md)
+
+**Replaced placeholder auth middleware with full session-based authentication and role-based authorization.**
+
+| Before | After |
+|---|---|
+| `authMiddleware` was a no-op (`next()`) | Validates Better Auth session cookie via `auth.api.getSession()` |
+| All data visible to anyone | Protected routes return 401 for unauthenticated requests |
+| No ownership scoping | Campaigns scoped to sponsor, ad slots scoped to publisher |
+| No cross-role protection | Sponsors get 403 on ad-slot routes, publishers get 403 on campaign routes |
+| Frontend API calls had no credentials | `credentials: 'include'` + server-side cookie forwarding |
+| No `/api/auth/me` endpoint | Returns authenticated user's profile, role, and entity ID |
+
+**Result:** Unauthenticated requests → 401. Cross-user access → 404. Cross-role access → 403. Both dashboards load correctly with scoped data.
+
+---
+
+## Challenges 4–5
 
 *To be documented as completed.*

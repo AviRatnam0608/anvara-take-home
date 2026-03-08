@@ -1,4 +1,4 @@
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { getUserRole } from '@/lib/auth-helpers';
@@ -21,12 +21,21 @@ export default async function SponsorDashboard() {
     redirect('/');
   }
 
+  // Forward session cookie so backend authMiddleware can validate the request
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore
+    .getAll()
+    .map((c) => `${c.name}=${c.value}`)
+    .join('; ');
+
   // Fetch campaigns server-side — no client-side fetch needed
   let campaigns: Campaign[] = [];
   let error: string | null = null;
 
   try {
-    campaigns = await getCampaigns(roleData.sponsorId);
+    campaigns = await getCampaigns(roleData.sponsorId, {
+      headers: { Cookie: cookieHeader },
+    });
   } catch {
     error = 'Failed to load campaigns';
   }
