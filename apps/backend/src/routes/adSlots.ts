@@ -5,6 +5,9 @@ import type { AuthRequest } from '../auth.js';
 
 const router: IRouter = Router();
 
+// Valid ad slot types matching the Prisma AdSlotType enum
+const VALID_AD_SLOT_TYPES = ['DISPLAY', 'VIDEO', 'NATIVE', 'NEWSLETTER', 'PODCAST'];
+
 // GET /api/ad-slots - List authenticated publisher's ad slots
 router.get('/', async (req: AuthRequest, res: Response) => {
   try {
@@ -88,6 +91,14 @@ router.post('/', async (req: AuthRequest, res: Response) => {
     if (!name || !type || !basePrice) {
       res.status(400).json({
         error: 'Name, type, and basePrice are required',
+      });
+      return;
+    }
+
+    // Validate type against AdSlotType enum — prevents Prisma from leaking internal errors
+    if (!VALID_AD_SLOT_TYPES.includes(type)) {
+      res.status(400).json({
+        error: `Invalid type. Must be one of: ${VALID_AD_SLOT_TYPES.join(', ')}`,
       });
       return;
     }
@@ -201,7 +212,99 @@ router.post('/:id/unbook', async (req: AuthRequest, res: Response) => {
   }
 });
 
-// TODO: Add PUT /api/ad-slots/:id endpoint (Challenge 4)
-// TODO: Add DELETE /api/ad-slots/:id endpoint (Challenge 4)
+// PUT /api/ad-slots/:id - Update ad slot (PUBLISHER only, must own it)
+router.put('/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    if (req.user!.role !== 'PUBLISHER' || !req.user!.publisherId) {
+      res.status(403).json({ error: 'Only publishers can update ad slots' });
+      return;
+    }
+
+    const id = getParam(req.params.id);
+
+    // Verify ownership: findFirst with publisherId filter
+    // Returns 404 for both "not found" and "not owned" — doesn't reveal resource existence
+    const existing = await prisma.adSlot.findFirst({
+      where: { id, publisherId: req.user!.publisherId },
+    });
+
+    if (!existing) {
+      res.status(404).json({ error: 'Ad slot not found' });
+      return;
+    }
+
+    // Extract only the fields that are allowed to be updated
+    const { name, description, type, position, width, height, basePrice, cpmFloor, isAvailable } = req.body;
+
+    // Build update data — only include fields that were actually provided
+    const updateData: Record<string, unknown> = {};
+    if (name !== undefined) updateData.name = name;
+    if (description !== undefined) updateData.description = description;
+    if (type !== undefined) {
+      if (!VALID_AD_SLOT_TYPES.includes(type)) {
+        res.status(400).json({
+          error: `Invalid type. Must be one of: ${VALID_AD_SLOT_TYPES.join(', ')}`,
+        });
+        return;
+      }
+      updateData.type = type;
+    }
+    if (position !== undefined) updateData.position = position;
+    if (width !== undefined) updateData.width = width;
+    if (height !== undefined) updateData.height = height;
+    if (basePrice !== undefined) updateData.basePrice = basePrice;
+    if (cpmFloor !== undefined) updateData.cpmFloor = cpmFloor;
+    if (isAvailable !== undefined) updateData.isAvailable = isAvailable;
+
+    // Require at least one field to update
+    if (Object.keys(updateData).length === 0) {
+      res.status(400).json({ error: 'No valid fields provided for update' });
+      return;
+    }
+
+    const adSlot = await prisma.adSlot.update({
+      where: { id },
+      data: updateData,
+      include: {
+        publisher: { select: { id: true, name: true } },
+      },
+    });
+
+    res.json(adSlot);
+  } catch (error) {
+    console.error('Error updating ad slot:', error);
+    res.status(500).json({ error: 'Failed to update ad slot' });
+  }
+});
+
+// DELETE /api/ad-slots/:id - Delete ad slot (PUBLISHER only, must own it)
+router.delete('/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    if (req.user!.role !== 'PUBLISHER' || !req.user!.publisherId) {
+      res.status(403).json({ error: 'Only publishers can delete ad slots' });
+      return;
+    }
+
+    const id = getParam(req.params.id);
+
+    // Verify ownership before deleting
+    const existing = await prisma.adSlot.findFirst({
+      where: { id, publisherId: req.user!.publisherId },
+    });
+
+    if (!existing) {
+      res.status(404).json({ error: 'Ad slot not found' });
+      return;
+    }
+
+    // Cascade delete handles related placements automatically
+    await prisma.adSlot.delete({ where: { id } });
+
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error deleting ad slot:', error);
+    res.status(500).json({ error: 'Failed to delete ad slot' });
+  }
+});
 
 export default router;

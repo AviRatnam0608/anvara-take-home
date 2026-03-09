@@ -8,6 +8,7 @@ const mockAdSlotFindFirst = vi.fn();
 const mockAdSlotFindUnique = vi.fn();
 const mockAdSlotCreate = vi.fn();
 const mockAdSlotUpdate = vi.fn();
+const mockAdSlotDelete = vi.fn();
 
 vi.mock('../db.js', () => ({
   prisma: {
@@ -17,6 +18,7 @@ vi.mock('../db.js', () => ({
       findUnique: (...args: unknown[]) => mockAdSlotFindUnique(...args),
       create: (...args: unknown[]) => mockAdSlotCreate(...args),
       update: (...args: unknown[]) => mockAdSlotUpdate(...args),
+      delete: (...args: unknown[]) => mockAdSlotDelete(...args),
     },
   },
 }));
@@ -125,6 +127,15 @@ describe('POST /api/ad-slots', () => {
     expect(res.body.error).toContain('required');
   });
 
+  it('returns 400 when invalid type is provided', async () => {
+    const res = await request(publisherApp())
+      .post('/api/ad-slots')
+      .send({ name: 'Test Slot', type: 'INVALID_TYPE', basePrice: 300 });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toContain('Invalid type');
+  });
+
   it('creates ad slot with the authenticated publishers publisherId', async () => {
     mockAdSlotCreate.mockResolvedValue({ ...sampleSlot, ...validBody });
 
@@ -217,5 +228,165 @@ describe('POST /api/ad-slots/:id/unbook', () => {
         data: { isAvailable: true },
       }),
     );
+  });
+});
+
+describe('PUT /api/ad-slots/:id', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('returns 403 for sponsor user', async () => {
+    const res = await request(sponsorApp())
+      .put('/api/ad-slots/slot-1')
+      .send({ name: 'Updated' });
+    expect(res.status).toBe(403);
+    expect(res.body.error).toBe('Only publishers can update ad slots');
+  });
+
+  it('returns 404 when ad slot does not exist or belongs to another publisher', async () => {
+    mockAdSlotFindFirst.mockResolvedValue(null);
+
+    const res = await request(publisherApp())
+      .put('/api/ad-slots/other-slot')
+      .send({ name: 'Updated' });
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Ad slot not found');
+  });
+
+  it('returns 400 when no valid fields are provided', async () => {
+    mockAdSlotFindFirst.mockResolvedValue(sampleSlot);
+
+    const res = await request(publisherApp())
+      .put('/api/ad-slots/slot-1')
+      .send({});
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('No valid fields provided for update');
+  });
+
+  it('returns 400 when invalid type is provided', async () => {
+    mockAdSlotFindFirst.mockResolvedValue(sampleSlot);
+
+    const res = await request(publisherApp())
+      .put('/api/ad-slots/slot-1')
+      .send({ type: 'INVALID_TYPE' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toContain('Invalid type');
+  });
+
+  it('updates ad slot successfully with valid fields', async () => {
+    mockAdSlotFindFirst.mockResolvedValue(sampleSlot);
+    const updatedSlot = { ...sampleSlot, name: 'Updated Banner', basePrice: 750 };
+    mockAdSlotUpdate.mockResolvedValue(updatedSlot);
+
+    const res = await request(publisherApp())
+      .put('/api/ad-slots/slot-1')
+      .send({ name: 'Updated Banner', basePrice: 750 });
+
+    expect(res.status).toBe(200);
+    expect(res.body.name).toBe('Updated Banner');
+    expect(mockAdSlotUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'slot-1' },
+        data: expect.objectContaining({ name: 'Updated Banner', basePrice: 750 }),
+      }),
+    );
+  });
+
+  it('updates ad slot type with valid enum value', async () => {
+    mockAdSlotFindFirst.mockResolvedValue(sampleSlot);
+    mockAdSlotUpdate.mockResolvedValue({ ...sampleSlot, type: 'VIDEO' });
+
+    const res = await request(publisherApp())
+      .put('/api/ad-slots/slot-1')
+      .send({ type: 'VIDEO' });
+
+    expect(res.status).toBe(200);
+    expect(mockAdSlotUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ type: 'VIDEO' }),
+      }),
+    );
+  });
+
+  it('verifies ownership via findFirst with publisherId', async () => {
+    mockAdSlotFindFirst.mockResolvedValue(sampleSlot);
+    mockAdSlotUpdate.mockResolvedValue(sampleSlot);
+
+    await request(publisherApp())
+      .put('/api/ad-slots/slot-1')
+      .send({ name: 'Test' });
+
+    expect(mockAdSlotFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'slot-1', publisherId: 'publisher-1' },
+      }),
+    );
+  });
+
+  it('returns 500 when prisma throws', async () => {
+    mockAdSlotFindFirst.mockResolvedValue(sampleSlot);
+    mockAdSlotUpdate.mockRejectedValue(new Error('DB error'));
+
+    const res = await request(publisherApp())
+      .put('/api/ad-slots/slot-1')
+      .send({ name: 'Updated' });
+
+    expect(res.status).toBe(500);
+    expect(res.body.error).toBe('Failed to update ad slot');
+  });
+});
+
+describe('DELETE /api/ad-slots/:id', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('returns 403 for sponsor user', async () => {
+    const res = await request(sponsorApp()).delete('/api/ad-slots/slot-1');
+    expect(res.status).toBe(403);
+    expect(res.body.error).toBe('Only publishers can delete ad slots');
+  });
+
+  it('returns 404 when ad slot does not exist or belongs to another publisher', async () => {
+    mockAdSlotFindFirst.mockResolvedValue(null);
+
+    const res = await request(publisherApp()).delete('/api/ad-slots/other-slot');
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Ad slot not found');
+  });
+
+  it('deletes ad slot successfully and returns 204', async () => {
+    mockAdSlotFindFirst.mockResolvedValue(sampleSlot);
+    mockAdSlotDelete.mockResolvedValue(sampleSlot);
+
+    const res = await request(publisherApp()).delete('/api/ad-slots/slot-1');
+
+    expect(res.status).toBe(204);
+    expect(res.body).toEqual({});
+    expect(mockAdSlotDelete).toHaveBeenCalledWith({ where: { id: 'slot-1' } });
+  });
+
+  it('verifies ownership via findFirst with publisherId before deleting', async () => {
+    mockAdSlotFindFirst.mockResolvedValue(sampleSlot);
+    mockAdSlotDelete.mockResolvedValue(sampleSlot);
+
+    await request(publisherApp()).delete('/api/ad-slots/slot-1');
+
+    expect(mockAdSlotFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'slot-1', publisherId: 'publisher-1' },
+      }),
+    );
+  });
+
+  it('returns 500 when prisma throws', async () => {
+    mockAdSlotFindFirst.mockResolvedValue(sampleSlot);
+    mockAdSlotDelete.mockRejectedValue(new Error('DB error'));
+
+    const res = await request(publisherApp()).delete('/api/ad-slots/slot-1');
+
+    expect(res.status).toBe(500);
+    expect(res.body.error).toBe('Failed to delete ad slot');
   });
 });

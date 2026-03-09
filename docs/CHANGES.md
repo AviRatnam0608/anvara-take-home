@@ -53,6 +53,24 @@ Detailed write-ups are in per-challenge files. Summaries are below.
 
 ---
 
-## Challenges 4–5
+## [Challenge 4: Complete CRUD Operations](changes/04-crud-operations.md)
+
+**Added 4 new endpoints, fixed broken POST validation, and added frontend API client functions.**
+
+| Change | Detail |
+|---|---|
+| PUT /api/campaigns/:id | Update campaign (SPONSOR only, ownership-verified) |
+| DELETE /api/campaigns/:id | Delete campaign (SPONSOR only, 204 No Content) |
+| PUT /api/ad-slots/:id | Update ad slot (PUBLISHER only, ownership-verified) |
+| DELETE /api/ad-slots/:id | Delete ad slot (PUBLISHER only, 204 No Content) |
+| POST /api/ad-slots fix | Added `AdSlotType` enum validation (was leaking Prisma errors) |
+| Frontend API client | Added `updateCampaign`, `deleteCampaign`, `updateAdSlot`, `deleteAdSlot` |
+| Tests | +27 new tests (13 campaigns, 14 ad slots) — 126 total passing |
+
+**Security:** All endpoints enforce role guards (403), ownership checks via `findFirst` (404 for not-owned — doesn't reveal existence), and enum validation (400 with clean messages).
+
+---
+
+## Challenge 5
 
 *To be documented as completed.*

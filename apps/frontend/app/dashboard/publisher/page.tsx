@@ -2,7 +2,7 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { getUserRole } from '@/lib/auth-helpers';
-import { AdSlotList } from './components/ad-slot-list';
+import { PublisherContent } from './components/publisher-content';
 
 export default async function PublisherDashboard() {
   const session = await auth.api.getSession({
@@ -19,14 +19,5 @@ export default async function PublisherDashboard() {
     redirect('/');
   }
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">My Ad Slots</h1>
-        {/* TODO: Add CreateAdSlotButton here */}
-      </div>
-
-      <AdSlotList />
-    </div>
-  );
+  return <PublisherContent />;
 }

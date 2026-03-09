@@ -21,7 +21,10 @@ export const getCampaign = (id: string, options?: RequestInit) =>
   api<any>(`/api/campaigns/${id}`, options);
 export const createCampaign = (data: any) =>
   api('/api/campaigns', { method: 'POST', body: JSON.stringify(data) });
-// TODO: Add updateCampaign and deleteCampaign functions
+export const updateCampaign = (id: string, data: any, options?: RequestInit) =>
+  api<any>(`/api/campaigns/${id}`, { method: 'PUT', body: JSON.stringify(data), ...options });
+export const deleteCampaign = (id: string, options?: RequestInit) =>
+  api<void>(`/api/campaigns/${id}`, { method: 'DELETE', ...options });
 
 // Ad Slots
 export const getAdSlots = (publisherId?: string, options?: RequestInit) =>
@@ -33,7 +36,10 @@ export const getAdSlot = (id: string, options?: RequestInit) =>
   api<any>(`/api/ad-slots/${id}`, options);
 export const createAdSlot = (data: any, options?: RequestInit) =>
   api('/api/ad-slots', { method: 'POST', body: JSON.stringify(data), ...options });
-// TODO: Add updateAdSlot, deleteAdSlot functions
+export const updateAdSlot = (id: string, data: any, options?: RequestInit) =>
+  api<any>(`/api/ad-slots/${id}`, { method: 'PUT', body: JSON.stringify(data), ...options });
+export const deleteAdSlot = (id: string, options?: RequestInit) =>
+  api<void>(`/api/ad-slots/${id}`, { method: 'DELETE', ...options });
 
 // Placements
 export const getPlacements = (options?: RequestInit) => api<any[]>('/api/placements', options);

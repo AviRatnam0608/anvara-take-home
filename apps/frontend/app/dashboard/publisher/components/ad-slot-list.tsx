@@ -7,7 +7,11 @@ import { AdSlotCard } from './ad-slot-card';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
 
-export function AdSlotList() {
+interface AdSlotListProps {
+  refreshTrigger?: number;
+}
+
+export function AdSlotList({ refreshTrigger }: AdSlotListProps) {
   const [adSlots, setAdSlots] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +40,7 @@ export function AdSlotList() {
     }
 
     loadAdSlots();
-  }, [session?.user?.id]);
+  }, [session?.user?.id, refreshTrigger]);
 
   if (loading) {
     return <div className="py-8 text-center text-[--color-muted]">Loading ad slots...</div>;

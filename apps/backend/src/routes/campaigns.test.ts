@@ -6,6 +6,8 @@ import { createTestApp, sponsorUser, publisherUser } from './__test-utils.js';
 const mockCampaignFindMany = vi.fn();
 const mockCampaignFindFirst = vi.fn();
 const mockCampaignCreate = vi.fn();
+const mockCampaignUpdate = vi.fn();
+const mockCampaignDelete = vi.fn();
 
 vi.mock('../db.js', () => ({
   prisma: {
@@ -13,6 +15,8 @@ vi.mock('../db.js', () => ({
       findMany: (...args: unknown[]) => mockCampaignFindMany(...args),
       findFirst: (...args: unknown[]) => mockCampaignFindFirst(...args),
       create: (...args: unknown[]) => mockCampaignCreate(...args),
+      update: (...args: unknown[]) => mockCampaignUpdate(...args),
+      delete: (...args: unknown[]) => mockCampaignDelete(...args),
     },
   },
 }));
@@ -200,5 +204,165 @@ describe('POST /api/campaigns', () => {
     const res = await request(sponsorApp()).post('/api/campaigns').send(validBody);
 
     expect(res.status).toBe(500);
+  });
+});
+
+describe('PUT /api/campaigns/:id', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('returns 403 for publisher user', async () => {
+    const res = await request(publisherApp())
+      .put('/api/campaigns/campaign-1')
+      .send({ name: 'Updated' });
+    expect(res.status).toBe(403);
+    expect(res.body.error).toBe('Only sponsors can update campaigns');
+  });
+
+  it('returns 404 when campaign does not exist or belongs to another sponsor', async () => {
+    mockCampaignFindFirst.mockResolvedValue(null);
+
+    const res = await request(sponsorApp())
+      .put('/api/campaigns/other-campaign')
+      .send({ name: 'Updated' });
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Campaign not found');
+  });
+
+  it('returns 400 when no valid fields are provided', async () => {
+    mockCampaignFindFirst.mockResolvedValue(sampleCampaign);
+
+    const res = await request(sponsorApp())
+      .put('/api/campaigns/campaign-1')
+      .send({});
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('No valid fields provided for update');
+  });
+
+  it('returns 400 when invalid status is provided', async () => {
+    mockCampaignFindFirst.mockResolvedValue(sampleCampaign);
+
+    const res = await request(sponsorApp())
+      .put('/api/campaigns/campaign-1')
+      .send({ status: 'INVALID_STATUS' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toContain('Invalid status');
+  });
+
+  it('updates campaign successfully with valid fields', async () => {
+    mockCampaignFindFirst.mockResolvedValue(sampleCampaign);
+    const updatedCampaign = { ...sampleCampaign, name: 'Updated Campaign', budget: 20000 };
+    mockCampaignUpdate.mockResolvedValue(updatedCampaign);
+
+    const res = await request(sponsorApp())
+      .put('/api/campaigns/campaign-1')
+      .send({ name: 'Updated Campaign', budget: 20000 });
+
+    expect(res.status).toBe(200);
+    expect(res.body.name).toBe('Updated Campaign');
+    expect(mockCampaignUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'campaign-1' },
+        data: expect.objectContaining({ name: 'Updated Campaign', budget: 20000 }),
+      }),
+    );
+  });
+
+  it('updates campaign status with valid enum value', async () => {
+    mockCampaignFindFirst.mockResolvedValue(sampleCampaign);
+    mockCampaignUpdate.mockResolvedValue({ ...sampleCampaign, status: 'PAUSED' });
+
+    const res = await request(sponsorApp())
+      .put('/api/campaigns/campaign-1')
+      .send({ status: 'PAUSED' });
+
+    expect(res.status).toBe(200);
+    expect(mockCampaignUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ status: 'PAUSED' }),
+      }),
+    );
+  });
+
+  it('verifies ownership via findFirst with sponsorId', async () => {
+    mockCampaignFindFirst.mockResolvedValue(sampleCampaign);
+    mockCampaignUpdate.mockResolvedValue(sampleCampaign);
+
+    await request(sponsorApp())
+      .put('/api/campaigns/campaign-1')
+      .send({ name: 'Test' });
+
+    expect(mockCampaignFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'campaign-1', sponsorId: 'sponsor-1' },
+      }),
+    );
+  });
+
+  it('returns 500 when prisma throws', async () => {
+    mockCampaignFindFirst.mockResolvedValue(sampleCampaign);
+    mockCampaignUpdate.mockRejectedValue(new Error('DB error'));
+
+    const res = await request(sponsorApp())
+      .put('/api/campaigns/campaign-1')
+      .send({ name: 'Updated' });
+
+    expect(res.status).toBe(500);
+    expect(res.body.error).toBe('Failed to update campaign');
+  });
+});
+
+describe('DELETE /api/campaigns/:id', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('returns 403 for publisher user', async () => {
+    const res = await request(publisherApp()).delete('/api/campaigns/campaign-1');
+    expect(res.status).toBe(403);
+    expect(res.body.error).toBe('Only sponsors can delete campaigns');
+  });
+
+  it('returns 404 when campaign does not exist or belongs to another sponsor', async () => {
+    mockCampaignFindFirst.mockResolvedValue(null);
+
+    const res = await request(sponsorApp()).delete('/api/campaigns/other-campaign');
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Campaign not found');
+  });
+
+  it('deletes campaign successfully and returns 204', async () => {
+    mockCampaignFindFirst.mockResolvedValue(sampleCampaign);
+    mockCampaignDelete.mockResolvedValue(sampleCampaign);
+
+    const res = await request(sponsorApp()).delete('/api/campaigns/campaign-1');
+
+    expect(res.status).toBe(204);
+    expect(res.body).toEqual({});
+    expect(mockCampaignDelete).toHaveBeenCalledWith({ where: { id: 'campaign-1' } });
+  });
+
+  it('verifies ownership via findFirst with sponsorId before deleting', async () => {
+    mockCampaignFindFirst.mockResolvedValue(sampleCampaign);
+    mockCampaignDelete.mockResolvedValue(sampleCampaign);
+
+    await request(sponsorApp()).delete('/api/campaigns/campaign-1');
+
+    expect(mockCampaignFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'campaign-1', sponsorId: 'sponsor-1' },
+      }),
+    );
+  });
+
+  it('returns 500 when prisma throws', async () => {
+    mockCampaignFindFirst.mockResolvedValue(sampleCampaign);
+    mockCampaignDelete.mockRejectedValue(new Error('DB error'));
+
+    const res = await request(sponsorApp()).delete('/api/campaigns/campaign-1');
+
+    expect(res.status).toBe(500);
+    expect(res.body.error).toBe('Failed to delete campaign');
   });
 });
