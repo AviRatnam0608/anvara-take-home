@@ -3,6 +3,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { authClient } from '@/auth-client';
+import { Megaphone, Layout, CircleNotch, User } from '@phosphor-icons/react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
 
@@ -11,7 +12,6 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Auto-fill credentials based on selected role
   const email = role === 'sponsor' ? 'sponsor@example.com' : 'publisher@example.com';
   const password = 'password';
 
@@ -20,20 +20,13 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
-    // Use Better Auth signIn.email with proper callbacks
     const { error: signInError } = await authClient.signIn.email(
-      {
-        email,
-        password,
-      },
+      { email, password },
       {
         onRequest: () => {
           setLoading(true);
         },
         onSuccess: async (ctx) => {
-          // Fetch user role to determine redirect.
-          // Use window.location.href (full navigation) instead of router.push()
-          // so the root layout re-renders the server-side Nav with the new session.
           try {
             const userId = ctx.data?.user?.id;
             if (userId) {
@@ -60,7 +53,6 @@ export default function LoginPage() {
       }
     );
 
-    // Handle any errors not caught by onError callback
     if (signInError) {
       setError(signInError.message || 'Login failed');
       setLoading(false);
@@ -68,37 +60,93 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[--color-background]">
-      <div className="w-full max-w-md rounded-lg border border-[--color-border] p-6 shadow-sm">
-        <h1 className="mb-6 text-2xl font-bold">Login to Anvara</h1>
+    <div className="flex min-h-[70vh] items-center justify-center">
+      <div className="w-full max-w-md animate-fade-in rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-8 shadow-xl shadow-black/10">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <User size={48} weight="duotone" className="mx-auto mb-3 text-[--color-primary]" />
+          <h1 className="text-2xl font-bold">Login to Anvara</h1>
+          <p className="mt-1 text-sm text-[--color-text-secondary]">Select a role to continue</p>
+        </div>
 
         {error && (
-          <div className="mb-4 rounded border border-red-200 bg-red-50 p-3 text-red-600">
+          <div className="mb-6 rounded-[--radius-md] border border-[--color-error]/20 bg-[--color-error-subtle] p-4 text-sm text-[--color-error]">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-[--color-foreground]">
-              Quick Login As
-            </label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value as 'sponsor' | 'publisher')}
-              className="mt-1 w-full rounded border border-[--color-border] bg-white px-3 py-2 text-gray-900"
-            >
-              <option value="sponsor">Sponsor (sponsor@example.com)</option>
-              <option value="publisher">Publisher (publisher@example.com)</option>
-            </select>
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Role selector cards */}
+          <fieldset>
+            <legend className="mb-3 text-sm font-medium text-[--color-text-secondary]">
+              Login as
+            </legend>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setRole('sponsor')}
+                className={`flex flex-col items-center gap-2 rounded-[--radius-lg] border-2 p-5 text-center transition-all ${
+                  role === 'sponsor'
+                    ? 'border-[--color-primary] bg-[--color-primary-subtle]'
+                    : 'border-[--color-border] bg-[--color-bg-input] hover:border-[--color-border-hover]'
+                }`}
+                aria-pressed={role === 'sponsor'}
+              >
+                <Megaphone
+                  size={28}
+                  weight="duotone"
+                  className={
+                    role === 'sponsor' ? 'text-[--color-primary]' : 'text-[--color-text-muted]'
+                  }
+                />
+                <span
+                  className={`text-sm font-semibold ${role === 'sponsor' ? 'text-[--color-primary]' : 'text-[--color-text-primary]'}`}
+                >
+                  Sponsor
+                </span>
+                <span className="text-xs text-[--color-text-muted]">sponsor@example.com</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setRole('publisher')}
+                className={`flex flex-col items-center gap-2 rounded-[--radius-lg] border-2 p-5 text-center transition-all ${
+                  role === 'publisher'
+                    ? 'border-[--color-secondary] bg-[--color-secondary-subtle]'
+                    : 'border-[--color-border] bg-[--color-bg-input] hover:border-[--color-border-hover]'
+                }`}
+                aria-pressed={role === 'publisher'}
+              >
+                <Layout
+                  size={28}
+                  weight="duotone"
+                  className={
+                    role === 'publisher' ? 'text-[--color-secondary]' : 'text-[--color-text-muted]'
+                  }
+                />
+                <span
+                  className={`text-sm font-semibold ${role === 'publisher' ? 'text-[--color-secondary]' : 'text-[--color-text-primary]'}`}
+                >
+                  Publisher
+                </span>
+                <span className="text-xs text-[--color-text-muted]">publisher@example.com</span>
+              </button>
+            </div>
+          </fieldset>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-[--color-primary] px-4 py-2 font-semibold text-white hover:opacity-90 disabled:opacity-50"
+            className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-[--radius-md] bg-[--color-primary] px-4 py-3 font-semibold text-white transition-colors hover:bg-[--color-primary-hover] disabled:opacity-50"
           >
-            {loading ? 'Logging in...' : `Login as ${role === 'sponsor' ? 'Sponsor' : 'Publisher'}`}
+            {loading ? (
+              <>
+                <CircleNotch size={18} weight="bold" className="animate-spin" />
+                Logging in...
+              </>
+            ) : (
+              `Login as ${role === 'sponsor' ? 'Sponsor' : 'Publisher'}`
+            )}
           </button>
         </form>
       </div>

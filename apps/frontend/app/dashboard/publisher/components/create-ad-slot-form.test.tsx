@@ -143,6 +143,6 @@ describe('CreateAdSlotForm', () => {
     fireEvent.click(screen.getByText('Add Ad Slot'));
 
     const nameInput = screen.getByLabelText(/^name/i);
-    expect(nameInput.className).toContain('border-red-400');
+    expect(nameInput.className).toContain('border-[--color-error]');
   });
 });

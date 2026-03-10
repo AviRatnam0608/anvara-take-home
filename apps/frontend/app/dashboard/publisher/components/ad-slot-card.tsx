@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { AdSlot } from '@/lib/types';
+import { PencilSimple } from '@phosphor-icons/react';
 import { EditAdSlotForm } from './edit-ad-slot-form';
 import { DeleteAdSlotButton } from './delete-ad-slot-button';
 
@@ -10,11 +11,11 @@ interface AdSlotCardProps {
 }
 
 const typeColors: Record<string, string> = {
-  DISPLAY: 'bg-blue-100 text-blue-700',
-  VIDEO: 'bg-red-100 text-red-700',
-  NATIVE: 'bg-green-100 text-green-700',
-  NEWSLETTER: 'bg-purple-100 text-purple-700',
-  PODCAST: 'bg-orange-100 text-orange-700',
+  DISPLAY: 'bg-[--color-primary-subtle] text-[--color-primary]',
+  VIDEO: 'bg-[--color-error-subtle] text-[--color-error]',
+  NATIVE: 'bg-[--color-success-subtle] text-[--color-success]',
+  NEWSLETTER: 'bg-[--color-secondary-subtle] text-[--color-secondary]',
+  PODCAST: 'bg-[--color-warning-subtle] text-[--color-warning]',
 };
 
 export function AdSlotCard({ adSlot }: AdSlotCardProps) {
@@ -22,35 +23,48 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
 
   return (
     <>
-      <div className="rounded-lg border border-[--color-border] p-4">
-        <div className="mb-2 flex items-start justify-between">
-          <h3 className="font-semibold">{adSlot.name}</h3>
-          <span className={`rounded px-2 py-0.5 text-xs ${typeColors[adSlot.type] || 'bg-gray-100'}`}>
+      <div className="rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-6 transition-all duration-200 hover:border-[--color-border-hover]">
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <h3 className="font-semibold text-[--color-text-primary]">{adSlot.name}</h3>
+          <span
+            className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${typeColors[adSlot.type] || 'bg-[--color-bg-input] text-[--color-text-muted]'}`}
+          >
             {adSlot.type}
           </span>
         </div>
 
         {adSlot.description && (
-          <p className="mb-3 text-sm text-[--color-muted] line-clamp-2">{adSlot.description}</p>
+          <p className="mb-4 text-sm leading-relaxed text-[--color-text-secondary] line-clamp-2">
+            {adSlot.description}
+          </p>
         )}
 
         <div className="flex items-center justify-between">
-          <span
-            className={`text-sm ${adSlot.isAvailable ? 'text-green-600' : 'text-[--color-muted]'}`}
-          >
-            {adSlot.isAvailable ? 'Available' : 'Booked'}
+          <span className="flex items-center gap-1.5 text-sm font-medium">
+            <span
+              className={`inline-block h-2 w-2 rounded-full ${adSlot.isAvailable ? 'bg-[--color-success]' : 'bg-[--color-text-muted]'}`}
+              aria-hidden="true"
+            />
+            <span
+              className={
+                adSlot.isAvailable ? 'text-[--color-success]' : 'text-[--color-text-muted]'
+              }
+            >
+              {adSlot.isAvailable ? 'Available' : 'Booked'}
+            </span>
           </span>
-          <span className="font-semibold text-[--color-primary]">
+          <span className="text-lg font-bold text-[--color-primary]">
             ${Number(adSlot.basePrice).toLocaleString()}/mo
           </span>
         </div>
 
         {/* Edit / Delete actions */}
-        <div className="mt-3 flex items-center gap-2 border-t border-[--color-border] pt-3">
+        <div className="mt-4 flex items-center gap-2 border-t border-[--color-border] pt-4">
           <button
             onClick={() => setIsEditing(true)}
-            className="cursor-pointer rounded px-3 py-1 text-sm text-[--color-primary] hover:bg-blue-50"
+            className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 rounded-[--radius-sm] px-3 py-2 text-sm font-medium text-[--color-primary] transition-colors hover:bg-[--color-primary-subtle]"
           >
+            <PencilSimple size={16} />
             Edit
           </button>
           <DeleteAdSlotButton adSlotId={adSlot.id} adSlotName={adSlot.name} />

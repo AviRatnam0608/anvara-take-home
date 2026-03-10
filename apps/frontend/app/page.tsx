@@ -1,42 +1,171 @@
 import Link from 'next/link';
-
-// TODO: This should be a marketing landing page, not just a simple welcome screen
-// TODO: Add proper metadata for SEO (title, description, Open Graph)
-// TODO: Add hero section, features, testimonials, etc.
-// HINT: Check out the bonus challenge for marketing landing page!
+import {
+  Megaphone,
+  Layout,
+  ChartLineUp,
+  ArrowRight,
+  Storefront,
+  ShieldCheck,
+  Lightning,
+} from '@phosphor-icons/react/dist/ssr';
 
 export default function Home() {
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-      <h1 className="mb-4 text-4xl font-bold">Welcome to Anvara</h1>
-      <p className="mb-8 max-w-md text-[--color-muted]">
-        The sponsorship marketplace connecting sponsors with publishers.
-      </p>
+    <div className="animate-fade-in">
+      {/* ─── Hero ────────────────────────────────────────────────── */}
+      <section className="relative flex min-h-[65vh] flex-col items-center justify-center text-center">
+        {/* Radial glow */}
+        <div
+          className="pointer-events-none absolute inset-0 -top-32"
+          style={{
+            background:
+              'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(37,99,235,0.10) 0%, transparent 70%)',
+          }}
+          aria-hidden="true"
+        />
 
-      <div className="flex gap-4">
-        <a
-          href="/login"
-          className="rounded-lg bg-[--color-primary] px-6 py-3 text-white hover:bg-[--color-primary-hover]"
-        >
-          Get Started
-        </a>
-      </div>
+        <h1 className="relative text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+          The Modern{' '}
+          <span className="bg-gradient-to-r from-[--color-primary] to-[--color-secondary] bg-clip-text text-transparent">
+            Sponsorship
+          </span>
+          <br />
+          Marketplace
+        </h1>
 
-      <div className="mt-16 grid gap-8 text-left sm:grid-cols-2">
-        <div className="rounded-lg border border-[--color-border] p-6">
-          <h2 className="mb-2 text-lg font-semibold text-[--color-primary]">For Sponsors</h2>
-          <p className="text-sm text-[--color-muted]">
-            Create campaigns, set budgets, and reach your target audience through premium
-            publishers.
+        <p className="relative mx-auto mt-6 max-w-lg text-lg text-[--color-text-secondary]">
+          Connect sponsors with premium publishers. Launch campaigns, manage ad slots, and grow your
+          reach — all in one place.
+        </p>
+
+        <div className="relative mt-10 flex flex-col gap-4 sm:flex-row">
+          <Link
+            href="/login"
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-[--radius-md] bg-[--color-primary] px-8 py-3.5 text-base font-semibold text-white transition-colors hover:bg-[--color-primary-hover]"
+          >
+            Get Started
+            <ArrowRight size={18} />
+          </Link>
+          <Link
+            href="/marketplace"
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-[--radius-md] border border-[--color-border] px-8 py-3.5 text-base font-medium text-[--color-text-primary] transition-colors hover:bg-[--color-glass-bg]"
+          >
+            <Storefront size={18} />
+            Browse Marketplace
+          </Link>
+        </div>
+      </section>
+
+      {/* ─── Features ────────────────────────────────────────────── */}
+      <section className="mt-8 mb-16">
+        <div className="mb-10 text-center">
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            Everything you need to grow
+          </h2>
+          <p className="mt-2 text-[--color-text-secondary]">
+            Powerful tools for both sponsors and publishers.
           </p>
         </div>
-        <div className="rounded-lg border border-[--color-border] p-6">
-          <h2 className="mb-2 text-lg font-semibold text-[--color-secondary]">For Publishers</h2>
-          <p className="text-sm text-[--color-muted]">
-            List your ad slots, set your rates, and connect with sponsors looking for your audience.
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-8 transition-all duration-200 hover:border-[--color-border-hover] hover:shadow-lg hover:shadow-black/5">
+            <div className="mb-4 inline-flex rounded-[--radius-md] bg-[--color-primary-subtle] p-3">
+              <Megaphone size={28} weight="duotone" className="text-[--color-primary]" />
+            </div>
+            <h3 className="text-lg font-semibold">For Sponsors</h3>
+            <p className="mt-2 text-sm leading-relaxed text-[--color-text-secondary]">
+              Create targeted campaigns, set budgets, and reach your audience through premium
+              publisher placements.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-8 transition-all duration-200 hover:border-[--color-border-hover] hover:shadow-lg hover:shadow-black/5">
+            <div className="mb-4 inline-flex rounded-[--radius-md] bg-[--color-secondary-subtle] p-3">
+              <Layout size={28} weight="duotone" className="text-[--color-secondary]" />
+            </div>
+            <h3 className="text-lg font-semibold">For Publishers</h3>
+            <p className="mt-2 text-sm leading-relaxed text-[--color-text-secondary]">
+              List your ad slots, set your rates, and connect with sponsors looking for your
+              audience.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-8 transition-all duration-200 hover:border-[--color-border-hover] hover:shadow-lg hover:shadow-black/5 sm:col-span-2 lg:col-span-1">
+            <div className="mb-4 inline-flex rounded-[--radius-md] bg-[--color-success-subtle] p-3">
+              <ChartLineUp size={28} weight="duotone" className="text-[--color-success]" />
+            </div>
+            <h3 className="text-lg font-semibold">Real-Time Analytics</h3>
+            <p className="mt-2 text-sm leading-relaxed text-[--color-text-secondary]">
+              Track impressions, clicks, and conversions. Optimize campaigns with data-driven
+              insights.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── How It Works ────────────────────────────────────────── */}
+      <section className="mb-20">
+        <div className="mb-10 text-center">
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">How it works</h2>
+          <p className="mt-2 text-[--color-text-secondary]">
+            Get started in three simple steps.
           </p>
         </div>
-      </div>
+
+        <div className="grid gap-8 sm:grid-cols-3">
+          {[
+            {
+              step: '1',
+              icon: ShieldCheck,
+              title: 'Create an Account',
+              description: 'Sign up as a sponsor or publisher in seconds. No credit card required.',
+            },
+            {
+              step: '2',
+              icon: Storefront,
+              title: 'Browse or List',
+              description:
+                'Sponsors browse the marketplace. Publishers list their ad slots with pricing.',
+            },
+            {
+              step: '3',
+              icon: Lightning,
+              title: 'Launch & Grow',
+              description:
+                'Book placements, launch campaigns, and track performance in real time.',
+            },
+          ].map((item) => (
+            <div key={item.step} className="text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[--color-primary-subtle] text-lg font-bold text-[--color-primary]">
+                {item.step}
+              </div>
+              <h3 className="text-lg font-semibold">{item.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[--color-text-secondary]">
+                {item.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── CTA ─────────────────────────────────────────────────── */}
+      <section className="mb-12 rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-12 text-center">
+        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          Ready to start?
+        </h2>
+        <p className="mx-auto mt-3 max-w-md text-[--color-text-secondary]">
+          Join thousands of sponsors and publishers already using Anvara to grow their business.
+        </p>
+        <div className="mt-8 flex justify-center gap-4">
+          <Link
+            href="/login"
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-[--radius-md] bg-[--color-primary] px-8 py-3.5 text-base font-semibold text-white transition-colors hover:bg-[--color-primary-hover]"
+          >
+            Get Started Free
+            <ArrowRight size={18} />
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useActionState, useEffect } from 'react';
 import { deleteAdSlotAction } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
+import { TrashSimple } from '@phosphor-icons/react';
 import type { ActionState } from '@/lib/types';
 
 const initialState: ActionState = {};
@@ -22,7 +23,7 @@ export function DeleteAdSlotButton({ adSlotId, adSlotName }: DeleteAdSlotButtonP
     }
   }, [state]);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: { preventDefault: () => void }) {
     if (!window.confirm(`Delete "${adSlotName}"? This cannot be undone.`)) {
       e.preventDefault();
     }
@@ -33,8 +34,9 @@ export function DeleteAdSlotButton({ adSlotId, adSlotName }: DeleteAdSlotButtonP
       <input type="hidden" name="id" value={adSlotId} />
       <SubmitButton
         pendingText="Deleting..."
-        className="cursor-pointer rounded px-3 py-1 text-sm text-red-600 hover:bg-red-50"
+        className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 rounded-[--radius-sm] px-3 py-2 text-sm font-medium text-[--color-error] transition-colors hover:bg-[--color-error-subtle]"
       >
+        <TrashSimple size={16} />
         Delete
       </SubmitButton>
     </form>

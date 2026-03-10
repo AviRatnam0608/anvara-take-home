@@ -30,12 +30,12 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
   }, [state, onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-md rounded-lg border border-[--color-border] bg-white p-6 text-black shadow-lg">
-        <h2 className="mb-4 text-lg font-bold">Edit Campaign</h2>
+    <div className="modal-overlay">
+      <div className="modal-content w-full max-w-md">
+        <h2 className="mb-4 text-lg font-bold text-[--color-text-primary]">Edit Campaign</h2>
 
         {state.error && (
-          <div className="mb-4 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+          <div className="mb-4 rounded-[--radius-sm] border border-[--color-error]/20 bg-[--color-error-subtle] p-3 text-sm text-[--color-error]">
             {state.error}
           </div>
         )}
@@ -47,21 +47,19 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
           <div>
             <label
               htmlFor="edit-campaign-name"
-              className="block text-sm font-medium text-[--color-foreground]"
+              className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
             >
-              Name <span className="text-red-500">*</span>
+              Name <span className="text-[--color-error]">*</span>
             </label>
             <input
               id="edit-campaign-name"
               name="name"
               type="text"
               defaultValue={campaign.name}
-              className={`mt-1 w-full rounded border px-3 py-2 text-gray-900 ${
-                state.fieldErrors?.name ? 'border-red-400' : 'border-[--color-border]'
-              }`}
+              className={state.fieldErrors?.name ? 'border-[--color-error]' : ''}
             />
             {state.fieldErrors?.name && (
-              <p className="mt-1 text-xs text-red-500">{state.fieldErrors.name}</p>
+              <p className="mt-1 text-xs text-[--color-error]">{state.fieldErrors.name}</p>
             )}
           </div>
 
@@ -69,7 +67,7 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
           <div>
             <label
               htmlFor="edit-campaign-description"
-              className="block text-sm font-medium text-[--color-foreground]"
+              className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
             >
               Description
             </label>
@@ -78,7 +76,6 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
               name="description"
               defaultValue={campaign.description ?? ''}
               rows={2}
-              className="mt-1 w-full rounded border border-[--color-border] px-3 py-2 text-gray-900"
             />
           </div>
 
@@ -86,9 +83,9 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
           <div>
             <label
               htmlFor="edit-campaign-budget"
-              className="block text-sm font-medium text-[--color-foreground]"
+              className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
             >
-              Budget ($) <span className="text-red-500">*</span>
+              Budget ($) <span className="text-[--color-error]">*</span>
             </label>
             <input
               id="edit-campaign-budget"
@@ -97,12 +94,10 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
               min="0.01"
               step="0.01"
               defaultValue={campaign.budget}
-              className={`mt-1 w-full rounded border px-3 py-2 text-gray-900 ${
-                state.fieldErrors?.budget ? 'border-red-400' : 'border-[--color-border]'
-              }`}
+              className={state.fieldErrors?.budget ? 'border-[--color-error]' : ''}
             />
             {state.fieldErrors?.budget && (
-              <p className="mt-1 text-xs text-red-500">{state.fieldErrors.budget}</p>
+              <p className="mt-1 text-xs text-[--color-error]">{state.fieldErrors.budget}</p>
             )}
           </div>
 
@@ -110,7 +105,7 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
           <div>
             <label
               htmlFor="edit-campaign-status"
-              className="block text-sm font-medium text-[--color-foreground]"
+              className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
             >
               Status
             </label>
@@ -118,9 +113,7 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
               id="edit-campaign-status"
               name="status"
               defaultValue={campaign.status}
-              className={`mt-1 w-full rounded border bg-white px-3 py-2 text-gray-900 ${
-                state.fieldErrors?.status ? 'border-red-400' : 'border-[--color-border]'
-              }`}
+              className={state.fieldErrors?.status ? 'border-[--color-error]' : ''}
             >
               {CAMPAIGN_STATUSES.map((s) => (
                 <option key={s} value={s}>
@@ -129,7 +122,7 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
               ))}
             </select>
             {state.fieldErrors?.status && (
-              <p className="mt-1 text-xs text-red-500">{state.fieldErrors.status}</p>
+              <p className="mt-1 text-xs text-[--color-error]">{state.fieldErrors.status}</p>
             )}
           </div>
 
@@ -137,21 +130,19 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
           <div>
             <label
               htmlFor="edit-campaign-startDate"
-              className="block text-sm font-medium text-[--color-foreground]"
+              className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
             >
-              Start Date <span className="text-red-500">*</span>
+              Start Date <span className="text-[--color-error]">*</span>
             </label>
             <input
               id="edit-campaign-startDate"
               name="startDate"
               type="date"
               defaultValue={toDateInput(campaign.startDate)}
-              className={`mt-1 w-full rounded border px-3 py-2 text-gray-900 ${
-                state.fieldErrors?.startDate ? 'border-red-400' : 'border-[--color-border]'
-              }`}
+              className={state.fieldErrors?.startDate ? 'border-[--color-error]' : ''}
             />
             {state.fieldErrors?.startDate && (
-              <p className="mt-1 text-xs text-red-500">{state.fieldErrors.startDate}</p>
+              <p className="mt-1 text-xs text-[--color-error]">{state.fieldErrors.startDate}</p>
             )}
           </div>
 
@@ -159,21 +150,19 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
           <div>
             <label
               htmlFor="edit-campaign-endDate"
-              className="block text-sm font-medium text-[--color-foreground]"
+              className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
             >
-              End Date <span className="text-red-500">*</span>
+              End Date <span className="text-[--color-error]">*</span>
             </label>
             <input
               id="edit-campaign-endDate"
               name="endDate"
               type="date"
               defaultValue={toDateInput(campaign.endDate)}
-              className={`mt-1 w-full rounded border px-3 py-2 text-gray-900 ${
-                state.fieldErrors?.endDate ? 'border-red-400' : 'border-[--color-border]'
-              }`}
+              className={state.fieldErrors?.endDate ? 'border-[--color-error]' : ''}
             />
             {state.fieldErrors?.endDate && (
-              <p className="mt-1 text-xs text-red-500">{state.fieldErrors.endDate}</p>
+              <p className="mt-1 text-xs text-[--color-error]">{state.fieldErrors.endDate}</p>
             )}
           </div>
 
@@ -183,7 +172,7 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer rounded-lg border border-[--color-border] px-4 py-2 font-semibold text-[--color-foreground] hover:bg-gray-50"
+              className="min-h-[44px] cursor-pointer rounded-[--radius-md] border border-[--color-border] px-4 py-2 font-semibold text-[--color-text-secondary] transition-colors hover:bg-[--color-bg-input]"
             >
               Cancel
             </button>

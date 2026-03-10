@@ -38,14 +38,19 @@ export default async function PublisherDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="animate-fade-in space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">My Ad Slots</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-[--color-text-primary]">
+          My Ad Slots
+        </h1>
         <CreateAdSlotForm />
       </div>
 
       {error ? (
-        <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">{error}</div>
+        <div className="rounded-[--radius-md] border border-[--color-error]/20 bg-[--color-error-subtle] p-4 text-[--color-error]">
+          <p className="font-medium">Unable to load ad slots</p>
+          <p className="mt-1 text-sm opacity-80">{error}</p>
+        </div>
       ) : (
         <AdSlotList adSlots={adSlots} />
       )}

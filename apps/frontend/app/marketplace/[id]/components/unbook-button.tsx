@@ -3,6 +3,7 @@
 import { useActionState } from 'react';
 import { unbookAdSlotAction } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
+import { ArrowCounterClockwise } from '@phosphor-icons/react';
 import type { ActionState } from '@/lib/types';
 
 const initialState: ActionState = {};
@@ -18,12 +19,13 @@ export function UnbookButton({ adSlotId }: UnbookButtonProps) {
     <form action={formAction} className="inline">
       <input type="hidden" name="adSlotId" value={adSlotId} />
       {state.error && (
-        <span className="mr-2 text-sm text-red-600">{state.error}</span>
+        <span className="mr-2 text-sm text-[--color-error]">{state.error}</span>
       )}
       <SubmitButton
         pendingText="Resetting..."
-        className="cursor-pointer text-sm text-[--color-primary] underline hover:opacity-80"
+        className="inline-flex cursor-pointer items-center gap-1 text-sm text-[--color-primary] underline transition-colors hover:text-[--color-primary-hover]"
       >
+        <ArrowCounterClockwise size={14} />
         Reset listing
       </SubmitButton>
     </form>

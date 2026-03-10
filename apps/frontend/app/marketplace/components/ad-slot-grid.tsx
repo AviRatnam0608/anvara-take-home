@@ -1,11 +1,13 @@
 import Link from 'next/link';
 import type { AdSlot } from '@/lib/types';
+import { MagnifyingGlass } from '@phosphor-icons/react/dist/ssr';
 
 const typeColors: Record<string, string> = {
-  DISPLAY: 'bg-blue-100 text-blue-700',
-  VIDEO: 'bg-red-100 text-red-700',
-  NEWSLETTER: 'bg-purple-100 text-purple-700',
-  PODCAST: 'bg-orange-100 text-orange-700',
+  DISPLAY: 'bg-[--color-primary-subtle] text-[--color-primary]',
+  VIDEO: 'bg-[--color-error-subtle] text-[--color-error]',
+  NATIVE: 'bg-[--color-success-subtle] text-[--color-success]',
+  NEWSLETTER: 'bg-[--color-secondary-subtle] text-[--color-secondary]',
+  PODCAST: 'bg-[--color-warning-subtle] text-[--color-warning]',
 };
 
 interface AdSlotGridProps {
@@ -15,44 +17,60 @@ interface AdSlotGridProps {
 export function AdSlotGrid({ adSlots }: AdSlotGridProps) {
   if (adSlots.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-[--color-border] p-12 text-center text-[--color-muted]">
-        No ad slots available at the moment.
+      <div className="rounded-2xl border border-dashed border-[--color-border] p-16 text-center">
+        <MagnifyingGlass
+          size={48}
+          weight="duotone"
+          className="mx-auto mb-4 text-[--color-text-muted]"
+        />
+        <h3 className="text-lg font-semibold text-[--color-text-primary]">No ad slots found</h3>
+        <p className="mt-1 text-sm text-[--color-text-secondary]">
+          There are no available ad slots at the moment. Check back later!
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="stagger-children grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {adSlots.map((slot) => (
         <Link
           key={slot.id}
           href={`/marketplace/${slot.id}`}
-          className="block rounded-lg border border-[--color-border] p-4 transition-shadow hover:shadow-md"
+          className="group block rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-6 transition-all duration-200 hover:border-[--color-border-hover] hover:shadow-lg hover:shadow-black/5"
         >
-          <div className="mb-2 flex items-start justify-between">
-            <h3 className="font-semibold">{slot.name}</h3>
+          <div className="mb-3 flex items-start justify-between gap-3">
+            <h3 className="text-lg font-semibold text-[--color-text-primary] transition-colors group-hover:text-[--color-primary]">
+              {slot.name}
+            </h3>
             <span
-              className={`rounded px-2 py-0.5 text-xs ${typeColors[slot.type] || 'bg-gray-100'}`}
+              className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${typeColors[slot.type] || 'bg-[--color-bg-input] text-[--color-text-muted]'}`}
             >
               {slot.type}
             </span>
           </div>
 
           {slot.publisher && (
-            <p className="mb-2 text-sm text-[--color-muted]">by {slot.publisher.name}</p>
+            <p className="mb-2 text-sm text-[--color-text-muted]">by {slot.publisher.name}</p>
           )}
 
           {slot.description && (
-            <p className="mb-3 text-sm text-[--color-muted] line-clamp-2">{slot.description}</p>
+            <p className="mb-4 text-sm leading-relaxed text-[--color-text-secondary] line-clamp-2">
+              {slot.description}
+            </p>
           )}
 
-          <div className="flex items-center justify-between">
-            <span
-              className={`text-sm ${slot.isAvailable ? 'text-green-600' : 'text-[--color-muted]'}`}
-            >
-              {slot.isAvailable ? 'Available' : 'Booked'}
+          <div className="flex items-center justify-between border-t border-[--color-border] pt-4">
+            <span className="flex items-center gap-1.5 text-sm font-medium">
+              <span
+                className={`inline-block h-2 w-2 rounded-full ${slot.isAvailable ? 'bg-[--color-success]' : 'bg-[--color-text-muted]'}`}
+                aria-hidden="true"
+              />
+              <span className={slot.isAvailable ? 'text-[--color-success]' : 'text-[--color-text-muted]'}>
+                {slot.isAvailable ? 'Available' : 'Booked'}
+              </span>
             </span>
-            <span className="font-semibold text-[--color-primary]">
+            <span className="text-lg font-bold text-[--color-primary]">
               ${Number(slot.basePrice).toLocaleString()}/mo
             </span>
           </div>

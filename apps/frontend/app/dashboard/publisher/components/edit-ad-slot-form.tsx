@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState, useEffect } from 'react';
+import { useActionState, useEffect } from 'react';
 import { updateAdSlotAction } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
 import type { ActionState, AdSlot } from '@/lib/types';
@@ -25,12 +25,12 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
   }, [state, onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-md rounded-lg border border-[--color-border] bg-white p-6 text-black shadow-lg">
-        <h2 className="mb-4 text-lg font-bold">Edit Ad Slot</h2>
+    <div className="modal-overlay">
+      <div className="modal-content w-full max-w-md">
+        <h2 className="mb-4 text-lg font-bold text-[--color-text-primary]">Edit Ad Slot</h2>
 
         {state.error && (
-          <div className="mb-4 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+          <div className="mb-4 rounded-[--radius-sm] border border-[--color-error]/20 bg-[--color-error-subtle] p-3 text-sm text-[--color-error]">
             {state.error}
           </div>
         )}
@@ -40,26 +40,30 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
 
           {/* Name */}
           <div>
-            <label htmlFor="edit-name" className="block text-sm font-medium text-[--color-foreground]">
-              Name <span className="text-red-500">*</span>
+            <label
+              htmlFor="edit-name"
+              className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
+            >
+              Name <span className="text-[--color-error]">*</span>
             </label>
             <input
               id="edit-name"
               name="name"
               type="text"
               defaultValue={adSlot.name}
-              className={`mt-1 w-full rounded border px-3 py-2 text-gray-900 ${
-                state.fieldErrors?.name ? 'border-red-400' : 'border-[--color-border]'
-              }`}
+              className={state.fieldErrors?.name ? 'border-[--color-error]' : ''}
             />
             {state.fieldErrors?.name && (
-              <p className="mt-1 text-xs text-red-500">{state.fieldErrors.name}</p>
+              <p className="mt-1 text-xs text-[--color-error]">{state.fieldErrors.name}</p>
             )}
           </div>
 
           {/* Description */}
           <div>
-            <label htmlFor="edit-description" className="block text-sm font-medium text-[--color-foreground]">
+            <label
+              htmlFor="edit-description"
+              className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
+            >
               Description
             </label>
             <textarea
@@ -67,22 +71,22 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
               name="description"
               defaultValue={adSlot.description ?? ''}
               rows={2}
-              className="mt-1 w-full rounded border border-[--color-border] px-3 py-2 text-gray-900"
             />
           </div>
 
           {/* Type */}
           <div>
-            <label htmlFor="edit-type" className="block text-sm font-medium text-[--color-foreground]">
-              Type <span className="text-red-500">*</span>
+            <label
+              htmlFor="edit-type"
+              className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
+            >
+              Type <span className="text-[--color-error]">*</span>
             </label>
             <select
               id="edit-type"
               name="type"
               defaultValue={adSlot.type}
-              className={`mt-1 w-full rounded border bg-white px-3 py-2 text-gray-900 ${
-                state.fieldErrors?.type ? 'border-red-400' : 'border-[--color-border]'
-              }`}
+              className={state.fieldErrors?.type ? 'border-[--color-error]' : ''}
             >
               <option value="">Select a type...</option>
               {AD_SLOT_TYPES.map((t) => (
@@ -92,14 +96,17 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
               ))}
             </select>
             {state.fieldErrors?.type && (
-              <p className="mt-1 text-xs text-red-500">{state.fieldErrors.type}</p>
+              <p className="mt-1 text-xs text-[--color-error]">{state.fieldErrors.type}</p>
             )}
           </div>
 
           {/* Base Price */}
           <div>
-            <label htmlFor="edit-basePrice" className="block text-sm font-medium text-[--color-foreground]">
-              Base Price ($/mo) <span className="text-red-500">*</span>
+            <label
+              htmlFor="edit-basePrice"
+              className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
+            >
+              Base Price ($/mo) <span className="text-[--color-error]">*</span>
             </label>
             <input
               id="edit-basePrice"
@@ -108,12 +115,10 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
               min="0.01"
               step="0.01"
               defaultValue={adSlot.basePrice}
-              className={`mt-1 w-full rounded border px-3 py-2 text-gray-900 ${
-                state.fieldErrors?.basePrice ? 'border-red-400' : 'border-[--color-border]'
-              }`}
+              className={state.fieldErrors?.basePrice ? 'border-[--color-error]' : ''}
             />
             {state.fieldErrors?.basePrice && (
-              <p className="mt-1 text-xs text-red-500">{state.fieldErrors.basePrice}</p>
+              <p className="mt-1 text-xs text-[--color-error]">{state.fieldErrors.basePrice}</p>
             )}
           </div>
 
@@ -123,7 +128,7 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer rounded-lg border border-[--color-border] px-4 py-2 font-semibold text-[--color-foreground] hover:bg-gray-50"
+              className="min-h-[44px] cursor-pointer rounded-[--radius-md] border border-[--color-border] px-4 py-2 font-semibold text-[--color-text-secondary] transition-colors hover:bg-[--color-bg-input]"
             >
               Cancel
             </button>

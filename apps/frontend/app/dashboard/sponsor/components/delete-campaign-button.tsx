@@ -3,6 +3,7 @@
 import { useActionState, useEffect } from 'react';
 import { deleteCampaignAction } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
+import { TrashSimple } from '@phosphor-icons/react';
 import type { ActionState } from '@/lib/types';
 
 const initialState: ActionState = {};
@@ -22,7 +23,7 @@ export function DeleteCampaignButton({ campaignId, campaignName }: DeleteCampaig
     }
   }, [state]);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: { preventDefault: () => void }) {
     if (!window.confirm(`Delete "${campaignName}"? This cannot be undone.`)) {
       e.preventDefault();
     }
@@ -33,8 +34,9 @@ export function DeleteCampaignButton({ campaignId, campaignName }: DeleteCampaig
       <input type="hidden" name="id" value={campaignId} />
       <SubmitButton
         pendingText="Deleting..."
-        className="cursor-pointer rounded px-3 py-1 text-sm text-red-600 hover:bg-red-50"
+        className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 rounded-[--radius-sm] px-3 py-2 text-sm font-medium text-[--color-error] transition-colors hover:bg-[--color-error-subtle]"
       >
+        <TrashSimple size={16} />
         Delete
       </SubmitButton>
     </form>

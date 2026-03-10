@@ -1,10 +1,13 @@
 'use client';
 
 import { useFormStatus } from 'react-dom';
+import { CircleNotch } from '@phosphor-icons/react';
+
+import type { ReactNode } from 'react';
 
 interface SubmitButtonProps {
   /** Text shown normally, e.g. "Create Ad Slot" */
-  children: React.ReactNode;
+  children: ReactNode;
   /** Text shown while the form is pending, e.g. "Creating..." */
   pendingText?: string;
   /** Additional CSS classes */
@@ -24,10 +27,17 @@ export function SubmitButton({ children, pendingText, className }: SubmitButtonP
       disabled={pending}
       className={
         className ??
-        'flex-1 cursor-pointer rounded-lg bg-[--color-primary] px-4 py-2 font-semibold text-black hover:opacity-90 disabled:opacity-50'
+        'flex min-h-[44px] flex-1 cursor-pointer items-center justify-center gap-2 rounded-[--radius-md] bg-[--color-primary] px-4 py-2.5 font-semibold text-white transition-colors hover:bg-[--color-primary-hover] disabled:opacity-50'
       }
     >
-      {pending ? (pendingText ?? 'Saving...') : children}
+      {pending ? (
+        <>
+          <CircleNotch size={16} weight="bold" className="animate-spin" />
+          {pendingText ?? 'Saving...'}
+        </>
+      ) : (
+        children
+      )}
     </button>
   );
 }

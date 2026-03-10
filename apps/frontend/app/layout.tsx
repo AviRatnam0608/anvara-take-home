@@ -1,27 +1,44 @@
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { Nav } from './components/nav';
 
-// TODO: Add ErrorBoundary wrapper for graceful error handling
-// TODO: Consider adding a loading.tsx for Suspense boundaries
-// TODO: Add Open Graph metadata for social media sharing
-// TODO: Add Twitter Card metadata
-// TODO: Consider adding favicon and app icons
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: 'Anvara Marketplace',
-  description: 'Sponsorship marketplace connecting sponsors with publishers',
-  // Missing: openGraph, twitter, icons, viewport, etc.
+  title: {
+    default: 'Anvara — Sponsorship Marketplace',
+    template: '%s | Anvara',
+  },
+  description:
+    'Connect sponsors with premium publishers. Create campaigns, manage ad slots, and grow your reach through targeted sponsorship placements.',
+  openGraph: {
+    title: 'Anvara — Sponsorship Marketplace',
+    description:
+      'Connect sponsors with premium publishers. Create campaigns, manage ad slots, and grow your reach.',
+    type: 'website',
+    siteName: 'Anvara',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Anvara — Sponsorship Marketplace',
+    description:
+      'Connect sponsors with premium publishers. Create campaigns, manage ad slots, and grow your reach.',
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // HINT: If using React Query, you would wrap children with QueryClientProvider here
-  // See: https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <body className="min-h-screen antialiased">
         <Nav />
-        <main className="mx-auto max-w-6xl p-4">{children}</main>
+        <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">{children}</main>
       </body>
     </html>
   );

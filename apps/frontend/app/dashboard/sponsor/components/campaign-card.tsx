@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Campaign } from '@/lib/types';
+import { PencilSimple } from '@phosphor-icons/react';
 import { EditCampaignForm } from './edit-campaign-form';
 import { DeleteCampaignButton } from './delete-campaign-button';
 
@@ -10,10 +11,10 @@ interface CampaignCardProps {
 }
 
 const statusColors: Record<string, string> = {
-  DRAFT: 'bg-gray-100 text-gray-600',
-  ACTIVE: 'bg-green-100 text-green-700',
-  PAUSED: 'bg-yellow-100 text-yellow-700',
-  COMPLETED: 'bg-blue-100 text-blue-700',
+  DRAFT: 'bg-[--color-bg-input] text-[--color-text-muted]',
+  ACTIVE: 'bg-[--color-success-subtle] text-[--color-success]',
+  PAUSED: 'bg-[--color-warning-subtle] text-[--color-warning]',
+  COMPLETED: 'bg-[--color-primary-subtle] text-[--color-primary]',
 };
 
 export function CampaignCard({ campaign }: CampaignCardProps) {
@@ -23,46 +24,50 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
 
   return (
     <>
-      <div className="rounded-lg border border-[--color-border] p-4">
-        <div className="mb-2 flex items-start justify-between">
-          <h3 className="font-semibold">{campaign.name}</h3>
+      <div className="rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-6 transition-all duration-200 hover:border-[--color-border-hover]">
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <h3 className="font-semibold text-[--color-text-primary]">{campaign.name}</h3>
           <span
-            className={`rounded px-2 py-0.5 text-xs ${statusColors[campaign.status] || 'bg-gray-100'}`}
+            className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${statusColors[campaign.status] || 'bg-[--color-bg-input] text-[--color-text-muted]'}`}
           >
-            {campaign.status}
+            {campaign.status.charAt(0) + campaign.status.slice(1).toLowerCase()}
           </span>
         </div>
 
         {campaign.description && (
-          <p className="mb-3 text-sm text-[--color-muted] line-clamp-2">{campaign.description}</p>
+          <p className="mb-4 text-sm leading-relaxed text-[--color-text-secondary] line-clamp-2">
+            {campaign.description}
+          </p>
         )}
 
-        <div className="mb-2">
+        <div className="mb-3">
           <div className="flex justify-between text-sm">
-            <span className="text-[--color-muted]">Budget</span>
-            <span>
-              ${Number(campaign.spent).toLocaleString()} / ${Number(campaign.budget).toLocaleString()}
+            <span className="text-[--color-text-muted]">Budget</span>
+            <span className="font-medium text-[--color-text-primary]">
+              ${Number(campaign.spent).toLocaleString()} / $
+              {Number(campaign.budget).toLocaleString()}
             </span>
           </div>
-          <div className="mt-1 h-1.5 rounded-full bg-gray-200">
+          <div className="mt-2 h-1.5 rounded-full bg-[--color-border]">
             <div
-              className="h-1.5 rounded-full bg-[--color-primary]"
+              className="h-1.5 rounded-full bg-[--color-primary] transition-all duration-500"
               style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>
         </div>
 
-        <div className="text-xs text-[--color-muted]">
-          {new Date(campaign.startDate).toLocaleDateString()} -{' '}
+        <div className="text-xs text-[--color-text-muted]">
+          {new Date(campaign.startDate).toLocaleDateString()} –{' '}
           {new Date(campaign.endDate).toLocaleDateString()}
         </div>
 
         {/* Edit / Delete actions */}
-        <div className="mt-3 flex items-center gap-2 border-t border-[--color-border] pt-3">
+        <div className="mt-4 flex items-center gap-2 border-t border-[--color-border] pt-4">
           <button
             onClick={() => setIsEditing(true)}
-            className="cursor-pointer rounded px-3 py-1 text-sm text-[--color-primary] hover:bg-blue-50"
+            className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 rounded-[--radius-sm] px-3 py-2 text-sm font-medium text-[--color-primary] transition-colors hover:bg-[--color-primary-subtle]"
           >
+            <PencilSimple size={16} />
             Edit
           </button>
           <DeleteCampaignButton campaignId={campaign.id} campaignName={campaign.name} />

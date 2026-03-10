@@ -29,31 +29,31 @@ describe('CampaignCard', () => {
 
   it('renders the status badge', () => {
     render(<CampaignCard campaign={baseCampaign} />);
-    expect(screen.getByText('ACTIVE')).toBeInTheDocument();
+    expect(screen.getByText('Active')).toBeInTheDocument();
   });
 
   it('applies correct class for ACTIVE status', () => {
     render(<CampaignCard campaign={baseCampaign} />);
-    const badge = screen.getByText('ACTIVE');
-    expect(badge.className).toContain('bg-green-100');
+    const badge = screen.getByText('Active');
+    expect(badge.className).toContain('bg-[--color-success-subtle]');
   });
 
   it('applies correct class for DRAFT status', () => {
     render(<CampaignCard campaign={{ ...baseCampaign, status: 'DRAFT' }} />);
-    const badge = screen.getByText('DRAFT');
-    expect(badge.className).toContain('bg-gray-100');
+    const badge = screen.getByText('Draft');
+    expect(badge.className).toContain('bg-[--color-bg-input]');
   });
 
   it('applies correct class for PAUSED status', () => {
     render(<CampaignCard campaign={{ ...baseCampaign, status: 'PAUSED' }} />);
-    const badge = screen.getByText('PAUSED');
-    expect(badge.className).toContain('bg-yellow-100');
+    const badge = screen.getByText('Paused');
+    expect(badge.className).toContain('bg-[--color-warning-subtle]');
   });
 
   it('applies correct class for COMPLETED status', () => {
     render(<CampaignCard campaign={{ ...baseCampaign, status: 'COMPLETED' }} />);
-    const badge = screen.getByText('COMPLETED');
-    expect(badge.className).toContain('bg-blue-100');
+    const badge = screen.getByText('Completed');
+    expect(badge.className).toContain('bg-[--color-primary-subtle]');
   });
 
   it('renders description when provided', () => {
@@ -62,7 +62,7 @@ describe('CampaignCard', () => {
   });
 
   it('does not render description when absent', () => {
-    const { description: _, ...noDesc } = baseCampaign;
+    const { description: _unused, ...noDesc } = baseCampaign;
     render(<CampaignCard campaign={noDesc} />);
     expect(screen.queryByText('Launch campaign for our new product')).not.toBeInTheDocument();
   });
@@ -102,6 +102,6 @@ describe('CampaignCard', () => {
   it('renders date range', () => {
     render(<CampaignCard campaign={baseCampaign} />);
     // Dates formatted via toLocaleDateString — just check they're present
-    expect(screen.getByText(/-/)).toBeInTheDocument();
+    expect(screen.getByText(/–/)).toBeInTheDocument();
   });
 });
