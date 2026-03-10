@@ -88,6 +88,58 @@ export async function authMiddleware(
   }
 }
 
+/**
+ * Optional authentication middleware — enriches req.user when a valid session
+ * is present but does NOT block the request when no session exists.
+ * Used for routes that are public but provide extra data to authenticated users
+ * (e.g., the marketplace GET endpoint).
+ */
+export async function optionalAuthMiddleware(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const headers = new Headers();
+    for (const [key, value] of Object.entries(req.headers)) {
+      if (typeof value === 'string') {
+        headers.set(key, value);
+      } else if (Array.isArray(value)) {
+        headers.set(key, value.join(', '));
+      }
+    }
+
+    const session = await auth.api.getSession({ headers });
+
+    if (session?.user) {
+      const userId = session.user.id;
+      const email = session.user.email;
+
+      const sponsor = await prisma.sponsor.findUnique({
+        where: { userId },
+        select: { id: true },
+      });
+
+      if (sponsor) {
+        req.user = { id: userId, email, role: 'SPONSOR', sponsorId: sponsor.id };
+      } else {
+        const publisher = await prisma.publisher.findUnique({
+          where: { userId },
+          select: { id: true },
+        });
+        if (publisher) {
+          req.user = { id: userId, email, role: 'PUBLISHER', publisherId: publisher.id };
+        }
+      }
+    }
+    // If no session or no role, req.user stays undefined — that's fine
+    next();
+  } catch {
+    // Auth lookup failed — continue without auth (it's optional)
+    next();
+  }
+}
+
 export function roleMiddleware(allowedRoles: Array<'SPONSOR' | 'PUBLISHER'>) {
   return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user || !allowedRoles.includes(req.user.role)) {

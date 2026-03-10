@@ -33,6 +33,10 @@ function sponsorApp() {
   return createTestApp('/api/ad-slots', adSlotsRouter, sponsorUser);
 }
 
+function noAuthApp() {
+  return createTestApp('/api/ad-slots', adSlotsRouter);
+}
+
 const sampleSlot = {
   id: 'slot-1',
   name: 'Header Banner',
@@ -48,16 +52,37 @@ const sampleSlot = {
 describe('GET /api/ad-slots', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('returns 403 for sponsor user', async () => {
-    const res = await request(sponsorApp()).get('/api/ad-slots');
-    expect(res.status).toBe(403);
-    expect(res.body.error).toBe('Only publishers can access ad slots');
-  });
-
-  it('returns ad slots scoped to publisher', async () => {
+  it('returns all available ad slots for unauthenticated requests (marketplace)', async () => {
     mockAdSlotFindMany.mockResolvedValue([sampleSlot]);
 
-    const res = await request(publisherApp()).get('/api/ad-slots');
+    const res = await request(noAuthApp()).get('/api/ad-slots');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(1);
+    expect(mockAdSlotFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ isAvailable: true }),
+      }),
+    );
+  });
+
+  it('returns all available ad slots for sponsor user (marketplace)', async () => {
+    mockAdSlotFindMany.mockResolvedValue([sampleSlot]);
+
+    const res = await request(sponsorApp()).get('/api/ad-slots');
+
+    expect(res.status).toBe(200);
+    expect(mockAdSlotFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ isAvailable: true }),
+      }),
+    );
+  });
+
+  it('returns ad slots scoped to publisher when publisherId param matches', async () => {
+    mockAdSlotFindMany.mockResolvedValue([sampleSlot]);
+
+    const res = await request(publisherApp()).get('/api/ad-slots?publisherId=publisher-1');
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(1);
@@ -80,27 +105,31 @@ describe('GET /api/ad-slots', () => {
 describe('GET /api/ad-slots/:id', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('returns 403 for sponsor user', async () => {
-    const res = await request(sponsorApp()).get('/api/ad-slots/slot-1');
-    expect(res.status).toBe(403);
-  });
+  it('returns ad slot for unauthenticated request (marketplace detail)', async () => {
+    mockAdSlotFindUnique.mockResolvedValue(sampleSlot);
 
-  it('returns ad slot when it belongs to the authenticated publisher', async () => {
-    mockAdSlotFindFirst.mockResolvedValue(sampleSlot);
-
-    const res = await request(publisherApp()).get('/api/ad-slots/slot-1');
+    const res = await request(noAuthApp()).get('/api/ad-slots/slot-1');
 
     expect(res.status).toBe(200);
     expect(res.body.name).toBe('Header Banner');
-    expect(mockAdSlotFindFirst).toHaveBeenCalledWith(
+    expect(mockAdSlotFindUnique).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: 'slot-1', publisherId: 'publisher-1' },
+        where: { id: 'slot-1' },
       }),
     );
   });
 
-  it('returns 404 when ad slot does not exist or belongs to another publisher', async () => {
-    mockAdSlotFindFirst.mockResolvedValue(null);
+  it('returns ad slot for any authenticated user', async () => {
+    mockAdSlotFindUnique.mockResolvedValue(sampleSlot);
+
+    const res = await request(sponsorApp()).get('/api/ad-slots/slot-1');
+
+    expect(res.status).toBe(200);
+    expect(res.body.name).toBe('Header Banner');
+  });
+
+  it('returns 404 when ad slot does not exist', async () => {
+    mockAdSlotFindUnique.mockResolvedValue(null);
 
     const res = await request(publisherApp()).get('/api/ad-slots/other-slot');
     expect(res.status).toBe(404);
@@ -112,6 +141,11 @@ describe('POST /api/ad-slots', () => {
   beforeEach(() => vi.clearAllMocks());
 
   const validBody = { name: 'New Slot', type: 'DISPLAY', basePrice: 300 };
+
+  it('returns 401 for unauthenticated user', async () => {
+    const res = await request(noAuthApp()).post('/api/ad-slots').send(validBody);
+    expect(res.status).toBe(401);
+  });
 
   it('returns 403 for sponsor user', async () => {
     const res = await request(sponsorApp()).post('/api/ad-slots').send(validBody);

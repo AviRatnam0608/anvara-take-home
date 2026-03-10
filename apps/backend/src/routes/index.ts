@@ -1,5 +1,5 @@
 import { Router, type IRouter } from 'express';
-import { authMiddleware } from '../auth.js';
+import { authMiddleware, optionalAuthMiddleware } from '../auth.js';
 import authRoutes from './auth.js';
 import sponsorsRoutes from './sponsors.js';
 import publishersRoutes from './publishers.js';
@@ -20,7 +20,7 @@ router.use('/health', healthRoutes);
 
 // Protected routes — require valid session
 router.use('/campaigns', authMiddleware, campaignsRoutes);
-router.use('/ad-slots', authMiddleware, adSlotsRoutes);
+router.use('/ad-slots', optionalAuthMiddleware, adSlotsRoutes);
 router.use('/placements', authMiddleware, placementsRoutes);
 router.use('/dashboard', authMiddleware, dashboardRoutes);
 

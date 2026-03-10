@@ -1,8 +1,15 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { CampaignCard } from './campaign-card';
+import type { Campaign } from '@/lib/types';
 
-const baseCampaign = {
+// Mock the server actions module — server actions can't run in jsdom
+vi.mock('../actions', () => ({
+  deleteCampaignAction: vi.fn(),
+  updateCampaignAction: vi.fn(),
+}));
+
+const baseCampaign: Campaign = {
   id: 'c1',
   name: 'Q1 Product Launch',
   description: 'Launch campaign for our new product',
@@ -11,6 +18,7 @@ const baseCampaign = {
   status: 'ACTIVE',
   startDate: '2026-01-01T00:00:00.000Z',
   endDate: '2026-03-31T00:00:00.000Z',
+  sponsorId: 's1',
 };
 
 describe('CampaignCard', () => {

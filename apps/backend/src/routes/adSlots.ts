@@ -8,20 +8,26 @@ const router: IRouter = Router();
 // Valid ad slot types matching the Prisma AdSlotType enum
 const VALID_AD_SLOT_TYPES = ['DISPLAY', 'VIDEO', 'NATIVE', 'NEWSLETTER', 'PODCAST'];
 
-// GET /api/ad-slots - List authenticated publisher's ad slots
+// GET /api/ad-slots - List ad slots
+// Public: returns all available ad slots (marketplace browsing)
+// Authenticated publisher with publisherId param: returns that publisher's ad slots
 router.get('/', async (req: AuthRequest, res: Response) => {
   try {
-    if (req.user!.role !== 'PUBLISHER' || !req.user!.publisherId) {
-      res.status(403).json({ error: 'Only publishers can access ad slots' });
-      return;
-    }
+    const { type, available, publisherId } = req.query;
 
-    const { type, available } = req.query;
+    // If a publisher is requesting their own ad slots (dashboard)
+    const isOwnerRequest =
+      req.user?.role === 'PUBLISHER' &&
+      req.user.publisherId &&
+      publisherId === req.user.publisherId;
 
     const adSlots = await prisma.adSlot.findMany({
       where: {
-        // Scope to the authenticated publisher's ad slots only
-        publisherId: req.user!.publisherId,
+        // Scoped to publisher's own slots when requested from dashboard
+        // Otherwise show all available slots for marketplace
+        ...(isOwnerRequest
+          ? { publisherId: req.user!.publisherId }
+          : { isAvailable: true }),
         ...(type && {
           type: type as string as 'DISPLAY' | 'VIDEO' | 'NATIVE' | 'NEWSLETTER' | 'PODCAST',
         }),
@@ -41,21 +47,13 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   }
 });
 
-// GET /api/ad-slots/:id - Get single ad slot (must own it)
+// GET /api/ad-slots/:id - Get single ad slot (public for marketplace detail)
 router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
-    if (req.user!.role !== 'PUBLISHER' || !req.user!.publisherId) {
-      res.status(403).json({ error: 'Only publishers can access ad slots' });
-      return;
-    }
-
     const id = getParam(req.params.id);
 
-    const adSlot = await prisma.adSlot.findFirst({
-      where: {
-        id,
-        publisherId: req.user!.publisherId,
-      },
+    const adSlot = await prisma.adSlot.findUnique({
+      where: { id },
       include: {
         publisher: true,
         placements: {
@@ -81,7 +79,11 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
 // POST /api/ad-slots - Create new ad slot for authenticated publisher
 router.post('/', async (req: AuthRequest, res: Response) => {
   try {
-    if (req.user!.role !== 'PUBLISHER' || !req.user!.publisherId) {
+    if (!req.user) {
+      res.status(401).json({ error: 'Not authenticated' });
+      return;
+    }
+    if (req.user.role !== 'PUBLISHER' || !req.user.publisherId) {
       res.status(403).json({ error: 'Only publishers can create ad slots' });
       return;
     }
@@ -110,7 +112,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
         description,
         type,
         basePrice,
-        publisherId: req.user!.publisherId!,
+        publisherId: req.user.publisherId!,
       },
       include: {
         publisher: { select: { id: true, name: true } },
@@ -127,7 +129,11 @@ router.post('/', async (req: AuthRequest, res: Response) => {
 // POST /api/ad-slots/:id/book - Book an ad slot (simplified booking flow, sponsors only)
 router.post('/:id/book', async (req: AuthRequest, res: Response) => {
   try {
-    if (req.user!.role !== 'SPONSOR') {
+    if (!req.user) {
+      res.status(401).json({ error: 'Not authenticated' });
+      return;
+    }
+    if (req.user.role !== 'SPONSOR') {
       res.status(403).json({ error: 'Only sponsors can book ad slots' });
       return;
     }
@@ -160,7 +166,7 @@ router.post('/:id/book', async (req: AuthRequest, res: Response) => {
       },
     });
 
-    console.log(`Ad slot ${id} booked by user ${req.user!.id}. Message: ${message || 'None'}`);
+    console.log(`Ad slot ${id} booked by user ${req.user.id}. Message: ${message || 'None'}`);
 
     res.json({
       success: true,
@@ -176,7 +182,11 @@ router.post('/:id/book', async (req: AuthRequest, res: Response) => {
 // POST /api/ad-slots/:id/unbook - Reset ad slot to available (for testing, publishers only)
 router.post('/:id/unbook', async (req: AuthRequest, res: Response) => {
   try {
-    if (req.user!.role !== 'PUBLISHER' || !req.user!.publisherId) {
+    if (!req.user) {
+      res.status(401).json({ error: 'Not authenticated' });
+      return;
+    }
+    if (req.user.role !== 'PUBLISHER' || !req.user.publisherId) {
       res.status(403).json({ error: 'Only publishers can unbook their ad slots' });
       return;
     }
@@ -185,7 +195,7 @@ router.post('/:id/unbook', async (req: AuthRequest, res: Response) => {
 
     // Verify the authenticated publisher owns this ad slot
     const adSlot = await prisma.adSlot.findFirst({
-      where: { id, publisherId: req.user!.publisherId },
+      where: { id, publisherId: req.user.publisherId },
     });
 
     if (!adSlot) {
@@ -215,7 +225,11 @@ router.post('/:id/unbook', async (req: AuthRequest, res: Response) => {
 // PUT /api/ad-slots/:id - Update ad slot (PUBLISHER only, must own it)
 router.put('/:id', async (req: AuthRequest, res: Response) => {
   try {
-    if (req.user!.role !== 'PUBLISHER' || !req.user!.publisherId) {
+    if (!req.user) {
+      res.status(401).json({ error: 'Not authenticated' });
+      return;
+    }
+    if (req.user.role !== 'PUBLISHER' || !req.user.publisherId) {
       res.status(403).json({ error: 'Only publishers can update ad slots' });
       return;
     }
@@ -225,7 +239,7 @@ router.put('/:id', async (req: AuthRequest, res: Response) => {
     // Verify ownership: findFirst with publisherId filter
     // Returns 404 for both "not found" and "not owned" — doesn't reveal resource existence
     const existing = await prisma.adSlot.findFirst({
-      where: { id, publisherId: req.user!.publisherId },
+      where: { id, publisherId: req.user.publisherId },
     });
 
     if (!existing) {
@@ -280,7 +294,11 @@ router.put('/:id', async (req: AuthRequest, res: Response) => {
 // DELETE /api/ad-slots/:id - Delete ad slot (PUBLISHER only, must own it)
 router.delete('/:id', async (req: AuthRequest, res: Response) => {
   try {
-    if (req.user!.role !== 'PUBLISHER' || !req.user!.publisherId) {
+    if (!req.user) {
+      res.status(401).json({ error: 'Not authenticated' });
+      return;
+    }
+    if (req.user.role !== 'PUBLISHER' || !req.user.publisherId) {
       res.status(403).json({ error: 'Only publishers can delete ad slots' });
       return;
     }
@@ -289,7 +307,7 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
 
     // Verify ownership before deleting
     const existing = await prisma.adSlot.findFirst({
-      where: { id, publisherId: req.user!.publisherId },
+      where: { id, publisherId: req.user.publisherId },
     });
 
     if (!existing) {

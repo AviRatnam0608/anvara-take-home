@@ -1,29 +1,38 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { CreateAdSlotForm } from './create-ad-slot-form';
+import type { ActionState } from '@/lib/types';
 
-// Mock the API module
-vi.mock('@/lib/api', () => ({
-  createAdSlot: vi.fn(),
+// Mock the server actions module — server actions can't run in jsdom
+vi.mock('../actions', () => ({
+  createAdSlotAction: vi.fn(),
 }));
 
-import { createAdSlot } from '@/lib/api';
-const mockCreateAdSlot = vi.mocked(createAdSlot);
+// We control what useActionState returns for each test
+let mockState: ActionState = {};
+const mockFormAction = vi.fn();
+
+vi.mock('react', async () => {
+  const actual = await vi.importActual('react');
+  return {
+    ...actual,
+    useActionState: vi.fn(() => [mockState, mockFormAction]),
+  };
+});
 
 describe('CreateAdSlotForm', () => {
-  const mockOnSuccess = vi.fn();
-
   beforeEach(() => {
+    mockState = {};
     vi.clearAllMocks();
   });
 
   it('renders the "Add Ad Slot" button', () => {
-    render(<CreateAdSlotForm onSuccess={mockOnSuccess} />);
+    render(<CreateAdSlotForm />);
     expect(screen.getByText('Add Ad Slot')).toBeInTheDocument();
   });
 
   it('opens the form when the button is clicked', () => {
-    render(<CreateAdSlotForm onSuccess={mockOnSuccess} />);
+    render(<CreateAdSlotForm />);
     fireEvent.click(screen.getByText('Add Ad Slot'));
 
     expect(screen.getByText('Create New Ad Slot')).toBeInTheDocument();
@@ -33,136 +42,8 @@ describe('CreateAdSlotForm', () => {
     expect(screen.getByLabelText(/base price/i)).toBeInTheDocument();
   });
 
-  it('shows validation errors when submitting empty form', async () => {
-    render(<CreateAdSlotForm onSuccess={mockOnSuccess} />);
-    fireEvent.click(screen.getByText('Add Ad Slot'));
-    fireEvent.click(screen.getByText('Create Ad Slot'));
-
-    expect(screen.getByText('Name is required')).toBeInTheDocument();
-    expect(screen.getByText('Type is required')).toBeInTheDocument();
-    expect(screen.getByText('Base price must be a positive number')).toBeInTheDocument();
-    expect(mockCreateAdSlot).not.toHaveBeenCalled();
-  });
-
-  it('shows validation error for missing name only', async () => {
-    render(<CreateAdSlotForm onSuccess={mockOnSuccess} />);
-    fireEvent.click(screen.getByText('Add Ad Slot'));
-
-    // Fill type and price but not name
-    fireEvent.change(screen.getByLabelText(/type/i), { target: { value: 'DISPLAY' } });
-    fireEvent.change(screen.getByLabelText(/base price/i), { target: { value: '500' } });
-    fireEvent.click(screen.getByText('Create Ad Slot'));
-
-    expect(screen.getByText('Name is required')).toBeInTheDocument();
-    expect(screen.queryByText('Type is required')).not.toBeInTheDocument();
-    expect(screen.queryByText('Base price must be a positive number')).not.toBeInTheDocument();
-  });
-
-  it('shows validation error for zero/negative price', async () => {
-    render(<CreateAdSlotForm onSuccess={mockOnSuccess} />);
-    fireEvent.click(screen.getByText('Add Ad Slot'));
-
-    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'Test Slot' } });
-    fireEvent.change(screen.getByLabelText(/type/i), { target: { value: 'DISPLAY' } });
-    fireEvent.change(screen.getByLabelText(/base price/i), { target: { value: '0' } });
-    fireEvent.click(screen.getByText('Create Ad Slot'));
-
-    expect(screen.getByText('Base price must be a positive number')).toBeInTheDocument();
-    expect(mockCreateAdSlot).not.toHaveBeenCalled();
-  });
-
-  it('clears validation error when user fixes the field', async () => {
-    render(<CreateAdSlotForm onSuccess={mockOnSuccess} />);
-    fireEvent.click(screen.getByText('Add Ad Slot'));
-    fireEvent.click(screen.getByText('Create Ad Slot'));
-
-    expect(screen.getByText('Name is required')).toBeInTheDocument();
-
-    // Type a name — error should clear
-    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'Fixed' } });
-    expect(screen.queryByText('Name is required')).not.toBeInTheDocument();
-  });
-
-  it('calls createAdSlot with correct data on valid submission', async () => {
-    mockCreateAdSlot.mockResolvedValue({} as any);
-
-    render(<CreateAdSlotForm onSuccess={mockOnSuccess} />);
-    fireEvent.click(screen.getByText('Add Ad Slot'));
-
-    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'Header Banner' } });
-    fireEvent.change(screen.getByLabelText(/description/i), {
-      target: { value: 'Top of page' },
-    });
-    fireEvent.change(screen.getByLabelText(/type/i), { target: { value: 'DISPLAY' } });
-    fireEvent.change(screen.getByLabelText(/base price/i), { target: { value: '500' } });
-    fireEvent.click(screen.getByText('Create Ad Slot'));
-
-    await waitFor(() => {
-      expect(mockCreateAdSlot).toHaveBeenCalledWith({
-        name: 'Header Banner',
-        description: 'Top of page',
-        type: 'DISPLAY',
-        basePrice: 500,
-      });
-    });
-  });
-
-  it('calls onSuccess callback after successful creation', async () => {
-    mockCreateAdSlot.mockResolvedValue({} as any);
-
-    render(<CreateAdSlotForm onSuccess={mockOnSuccess} />);
-    fireEvent.click(screen.getByText('Add Ad Slot'));
-
-    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'Test' } });
-    fireEvent.change(screen.getByLabelText(/type/i), { target: { value: 'VIDEO' } });
-    fireEvent.change(screen.getByLabelText(/base price/i), { target: { value: '300' } });
-    fireEvent.click(screen.getByText('Create Ad Slot'));
-
-    await waitFor(() => {
-      expect(mockOnSuccess).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  it('closes the form after successful creation', async () => {
-    mockCreateAdSlot.mockResolvedValue({} as any);
-
-    render(<CreateAdSlotForm onSuccess={mockOnSuccess} />);
-    fireEvent.click(screen.getByText('Add Ad Slot'));
-
-    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'Test' } });
-    fireEvent.change(screen.getByLabelText(/type/i), { target: { value: 'NATIVE' } });
-    fireEvent.change(screen.getByLabelText(/base price/i), { target: { value: '200' } });
-    fireEvent.click(screen.getByText('Create Ad Slot'));
-
-    await waitFor(() => {
-      expect(screen.queryByText('Create New Ad Slot')).not.toBeInTheDocument();
-    });
-    // Button should be back
-    expect(screen.getByText('Add Ad Slot')).toBeInTheDocument();
-  });
-
-  it('shows error message when API call fails', async () => {
-    mockCreateAdSlot.mockRejectedValue(new Error('API error'));
-
-    render(<CreateAdSlotForm onSuccess={mockOnSuccess} />);
-    fireEvent.click(screen.getByText('Add Ad Slot'));
-
-    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'Test' } });
-    fireEvent.change(screen.getByLabelText(/type/i), { target: { value: 'DISPLAY' } });
-    fireEvent.change(screen.getByLabelText(/base price/i), { target: { value: '100' } });
-    fireEvent.click(screen.getByText('Create Ad Slot'));
-
-    await waitFor(() => {
-      expect(screen.getByText(/failed to create/i)).toBeInTheDocument();
-    });
-
-    // Form should stay open
-    expect(screen.getByText('Create New Ad Slot')).toBeInTheDocument();
-    expect(mockOnSuccess).not.toHaveBeenCalled();
-  });
-
   it('closes the form when cancel is clicked', () => {
-    render(<CreateAdSlotForm onSuccess={mockOnSuccess} />);
+    render(<CreateAdSlotForm />);
     fireEvent.click(screen.getByText('Add Ad Slot'));
 
     expect(screen.getByText('Create New Ad Slot')).toBeInTheDocument();
@@ -173,21 +54,8 @@ describe('CreateAdSlotForm', () => {
     expect(screen.getByText('Add Ad Slot')).toBeInTheDocument();
   });
 
-  it('resets form fields when cancelled and reopened', () => {
-    render(<CreateAdSlotForm onSuccess={mockOnSuccess} />);
-
-    // Open and fill some fields
-    fireEvent.click(screen.getByText('Add Ad Slot'));
-    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'Dirty Data' } });
-    fireEvent.click(screen.getByText('Cancel'));
-
-    // Reopen — should be clean
-    fireEvent.click(screen.getByText('Add Ad Slot'));
-    expect(screen.getByLabelText(/name/i)).toHaveValue('');
-  });
-
   it('renders all 5 ad slot type options', () => {
-    render(<CreateAdSlotForm onSuccess={mockOnSuccess} />);
+    render(<CreateAdSlotForm />);
     fireEvent.click(screen.getByText('Add Ad Slot'));
 
     const select = screen.getByLabelText(/type/i);
@@ -203,25 +71,78 @@ describe('CreateAdSlotForm', () => {
     expect(options[5]).toHaveTextContent('Podcast');
   });
 
-  it('omits description from API call when left empty', async () => {
-    mockCreateAdSlot.mockResolvedValue({} as any);
+  it('displays field-level validation errors from server action', () => {
+    mockState = {
+      fieldErrors: {
+        name: 'Name is required',
+        type: 'Type is required',
+        basePrice: 'Base price must be a positive number',
+      },
+    };
 
-    render(<CreateAdSlotForm onSuccess={mockOnSuccess} />);
+    render(<CreateAdSlotForm />);
     fireEvent.click(screen.getByText('Add Ad Slot'));
 
-    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'No Desc Slot' } });
-    // Leave description empty
-    fireEvent.change(screen.getByLabelText(/type/i), { target: { value: 'PODCAST' } });
-    fireEvent.change(screen.getByLabelText(/base price/i), { target: { value: '750' } });
-    fireEvent.click(screen.getByText('Create Ad Slot'));
+    expect(screen.getByText('Name is required')).toBeInTheDocument();
+    expect(screen.getByText('Type is required')).toBeInTheDocument();
+    expect(screen.getByText('Base price must be a positive number')).toBeInTheDocument();
+  });
 
-    await waitFor(() => {
-      expect(mockCreateAdSlot).toHaveBeenCalledWith({
-        name: 'No Desc Slot',
-        description: undefined,
-        type: 'PODCAST',
-        basePrice: 750,
-      });
-    });
+  it('displays a single field error without showing others', () => {
+    mockState = {
+      fieldErrors: {
+        name: 'Name is required',
+      },
+    };
+
+    render(<CreateAdSlotForm />);
+    fireEvent.click(screen.getByText('Add Ad Slot'));
+
+    expect(screen.getByText('Name is required')).toBeInTheDocument();
+    expect(screen.queryByText('Type is required')).not.toBeInTheDocument();
+    expect(screen.queryByText('Base price must be a positive number')).not.toBeInTheDocument();
+  });
+
+  it('displays server error message from action', () => {
+    mockState = { error: 'Failed to create ad slot' };
+
+    render(<CreateAdSlotForm />);
+    fireEvent.click(screen.getByText('Add Ad Slot'));
+
+    expect(screen.getByText('Failed to create ad slot')).toBeInTheDocument();
+    // Form should stay open on error
+    expect(screen.getByText('Create New Ad Slot')).toBeInTheDocument();
+  });
+
+  it('renders the submit button with correct text', () => {
+    render(<CreateAdSlotForm />);
+    fireEvent.click(screen.getByText('Add Ad Slot'));
+
+    expect(screen.getByRole('button', { name: 'Create Ad Slot' })).toBeInTheDocument();
+  });
+
+  it('form fields use correct name attributes for FormData', () => {
+    render(<CreateAdSlotForm />);
+    fireEvent.click(screen.getByText('Add Ad Slot'));
+
+    // Verify name attributes so FormData works correctly with the server action
+    expect(screen.getByLabelText(/^name/i)).toHaveAttribute('name', 'name');
+    expect(screen.getByLabelText(/description/i)).toHaveAttribute('name', 'description');
+    expect(screen.getByLabelText(/type/i)).toHaveAttribute('name', 'type');
+    expect(screen.getByLabelText(/base price/i)).toHaveAttribute('name', 'basePrice');
+  });
+
+  it('highlights fields with errors via border styling', () => {
+    mockState = {
+      fieldErrors: {
+        name: 'Name is required',
+      },
+    };
+
+    render(<CreateAdSlotForm />);
+    fireEvent.click(screen.getByText('Add Ad Slot'));
+
+    const nameInput = screen.getByLabelText(/^name/i);
+    expect(nameInput.className).toContain('border-red-400');
   });
 });

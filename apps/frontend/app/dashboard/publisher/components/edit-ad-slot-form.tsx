@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useState, useEffect } from 'react';
-import { createAdSlotAction } from '../actions';
+import { updateAdSlotAction } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
 import type { ActionState, AdSlot } from '@/lib/types';
 
@@ -9,36 +9,25 @@ const AD_SLOT_TYPES: AdSlot['type'][] = ['DISPLAY', 'VIDEO', 'NATIVE', 'NEWSLETT
 
 const initialState: ActionState = {};
 
-export function CreateAdSlotForm() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [state, formAction] = useActionState(createAdSlotAction, initialState);
+interface EditAdSlotFormProps {
+  adSlot: AdSlot;
+  onClose: () => void;
+}
+
+export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
+  const [state, formAction] = useActionState(updateAdSlotAction, initialState);
 
   // Close modal on success
   useEffect(() => {
     if (state.success) {
-      setIsOpen(false);
+      onClose();
     }
-  }, [state]);
-
-  function handleCancel() {
-    setIsOpen(false);
-  }
-
-  if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="cursor-pointer rounded-lg bg-[--color-primary] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
-      >
-        Add Ad Slot
-      </button>
-    );
-  }
+  }, [state, onClose]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="w-full max-w-md rounded-lg border border-[--color-border] bg-white p-6 text-black shadow-lg">
-        <h2 className="mb-4 text-lg font-bold">Create New Ad Slot</h2>
+        <h2 className="mb-4 text-lg font-bold">Edit Ad Slot</h2>
 
         {state.error && (
           <div className="mb-4 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-600">
@@ -47,16 +36,18 @@ export function CreateAdSlotForm() {
         )}
 
         <form action={formAction} className="space-y-4">
+          <input type="hidden" name="id" value={adSlot.id} />
+
           {/* Name */}
           <div>
-            <label htmlFor="create-name" className="block text-sm font-medium text-[--color-foreground]">
+            <label htmlFor="edit-name" className="block text-sm font-medium text-[--color-foreground]">
               Name <span className="text-red-500">*</span>
             </label>
             <input
-              id="create-name"
+              id="edit-name"
               name="name"
               type="text"
-              placeholder="e.g. Header Banner"
+              defaultValue={adSlot.name}
               className={`mt-1 w-full rounded border px-3 py-2 text-gray-900 ${
                 state.fieldErrors?.name ? 'border-red-400' : 'border-[--color-border]'
               }`}
@@ -68,13 +59,13 @@ export function CreateAdSlotForm() {
 
           {/* Description */}
           <div>
-            <label htmlFor="create-description" className="block text-sm font-medium text-[--color-foreground]">
+            <label htmlFor="edit-description" className="block text-sm font-medium text-[--color-foreground]">
               Description
             </label>
             <textarea
-              id="create-description"
+              id="edit-description"
               name="description"
-              placeholder="Optional description of the ad slot"
+              defaultValue={adSlot.description ?? ''}
               rows={2}
               className="mt-1 w-full rounded border border-[--color-border] px-3 py-2 text-gray-900"
             />
@@ -82,12 +73,13 @@ export function CreateAdSlotForm() {
 
           {/* Type */}
           <div>
-            <label htmlFor="create-type" className="block text-sm font-medium text-[--color-foreground]">
+            <label htmlFor="edit-type" className="block text-sm font-medium text-[--color-foreground]">
               Type <span className="text-red-500">*</span>
             </label>
             <select
-              id="create-type"
+              id="edit-type"
               name="type"
+              defaultValue={adSlot.type}
               className={`mt-1 w-full rounded border bg-white px-3 py-2 text-gray-900 ${
                 state.fieldErrors?.type ? 'border-red-400' : 'border-[--color-border]'
               }`}
@@ -106,16 +98,16 @@ export function CreateAdSlotForm() {
 
           {/* Base Price */}
           <div>
-            <label htmlFor="create-basePrice" className="block text-sm font-medium text-[--color-foreground]">
+            <label htmlFor="edit-basePrice" className="block text-sm font-medium text-[--color-foreground]">
               Base Price ($/mo) <span className="text-red-500">*</span>
             </label>
             <input
-              id="create-basePrice"
+              id="edit-basePrice"
               name="basePrice"
               type="number"
               min="0.01"
               step="0.01"
-              placeholder="e.g. 500"
+              defaultValue={adSlot.basePrice}
               className={`mt-1 w-full rounded border px-3 py-2 text-gray-900 ${
                 state.fieldErrors?.basePrice ? 'border-red-400' : 'border-[--color-border]'
               }`}
@@ -127,10 +119,10 @@ export function CreateAdSlotForm() {
 
           {/* Actions */}
           <div className="flex gap-3 pt-2">
-            <SubmitButton pendingText="Creating...">Create Ad Slot</SubmitButton>
+            <SubmitButton pendingText="Saving...">Save Changes</SubmitButton>
             <button
               type="button"
-              onClick={handleCancel}
+              onClick={onClose}
               className="cursor-pointer rounded-lg border border-[--color-border] px-4 py-2 font-semibold text-[--color-foreground] hover:bg-gray-50"
             >
               Cancel

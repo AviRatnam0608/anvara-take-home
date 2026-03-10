@@ -68,8 +68,8 @@ describe('Protected routes without auth', () => {
     expect(res.body.error).toBe('Not authenticated');
   });
 
-  it('returns 401 for unauthenticated ad-slots request', async () => {
-    const res = await request(app).get('/api/ad-slots');
+  it('returns 401 for unauthenticated ad-slots mutation', async () => {
+    const res = await request(app).post('/api/ad-slots').send({ name: 'Test' });
     expect(res.status).toBe(401);
   });
 

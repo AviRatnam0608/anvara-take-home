@@ -71,6 +71,24 @@ Detailed write-ups are in per-challenge files. Summaries are below.
 
 ---
 
-## Challenge 5
+## [Challenge 5: Dashboards with Server Actions](changes/05-server-actions.md)
 
-*To be documented as completed.*
+**Converted both dashboards to full CRUD using Next.js Server Actions with React 19 patterns.**
+
+| Change | Detail |
+|---|---|
+| `lib/server-api.ts` | Server-side API helper with cookie forwarding via `next/headers` |
+| `ActionState` type | Shared return type for all server actions (`success`, `error`, `fieldErrors`) |
+| `SubmitButton` component | Shared button using `useFormStatus()` for "Saving..." / "Deleting..." states |
+| Publisher dashboard | 3 server actions + create/edit/delete UI. Refactored to server-side fetch for `revalidatePath` |
+| Sponsor dashboard | 3 server actions + create/edit/delete UI with status dropdown and date inputs |
+| `publisher-content.tsx` | Deleted — `refreshTrigger` pattern replaced by `revalidatePath` |
+
+**Technical patterns:**
+- `useActionState` (React 19) for form state management
+- `useFormStatus` for pending states ("Creating...", "Saving...", "Deleting...")
+- `revalidatePath()` for automatic data refresh after mutations
+- `defaultValue` on inputs for uncontrolled edit forms (progressive enhancement)
+- `window.confirm()` for delete confirmation
+
+**Result:** 136 tests passing (110 backend + 26 frontend). Full CRUD verified in browser for both dashboards. All authentication and role guards working.

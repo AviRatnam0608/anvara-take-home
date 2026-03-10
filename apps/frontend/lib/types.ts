@@ -1,3 +1,10 @@
+// Shared state type for Server Actions (useActionState)
+export interface ActionState {
+  success?: boolean;
+  error?: string;
+  fieldErrors?: Record<string, string>;
+}
+
 // Core types matching the Prisma schema
 
 export type UserRole = 'sponsor' | 'publisher';

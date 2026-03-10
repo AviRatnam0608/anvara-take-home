@@ -19,7 +19,7 @@ app.use(limiter);
 // CORS configured with credentials to allow session cookies from the frontend
 app.use(
   cors({
-    origin: process.env.BETTER_AUTH_URL || 'http://localhost:3847',
+    origin: process.env.BETTER_AUTH_URL || ['http://localhost:3847', 'http://127.0.0.1:3847'],
     credentials: true,
   }),
 );
