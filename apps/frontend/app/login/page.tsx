@@ -1,14 +1,12 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { authClient } from '@/auth-client';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
 
 export default function LoginPage() {
-  const router = useRouter();
   const [role, setRole] = useState<'sponsor' | 'publisher'>('sponsor');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -33,24 +31,26 @@ export default function LoginPage() {
           setLoading(true);
         },
         onSuccess: async (ctx) => {
-          // Fetch user role to determine redirect
+          // Fetch user role to determine redirect.
+          // Use window.location.href (full navigation) instead of router.push()
+          // so the root layout re-renders the server-side Nav with the new session.
           try {
             const userId = ctx.data?.user?.id;
             if (userId) {
               const roleRes = await fetch(`${API_URL}/api/auth/role/${userId}`);
               const roleData = await roleRes.json();
               if (roleData.role === 'sponsor') {
-                router.push('/dashboard/sponsor');
+                window.location.href = '/dashboard/sponsor';
               } else if (roleData.role === 'publisher') {
-                router.push('/dashboard/publisher');
+                window.location.href = '/dashboard/publisher';
               } else {
-                router.push('/');
+                window.location.href = '/';
               }
             } else {
-              router.push('/');
+              window.location.href = '/';
             }
           } catch {
-            router.push('/');
+            window.location.href = '/';
           }
         },
         onError: (ctx) => {

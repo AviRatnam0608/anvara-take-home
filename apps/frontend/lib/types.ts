@@ -30,7 +30,7 @@ export interface AdSlot {
   basePrice: number;
   isAvailable: boolean;
   publisherId: string;
-  publisher?: { id: string; name: string };
+  publisher?: { id: string; name: string; website?: string };
 }
 
 export interface Placement {

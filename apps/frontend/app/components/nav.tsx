@@ -1,33 +1,21 @@
-'use client';
-
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { authClient } from '@/auth-client';
+import { headers } from 'next/headers';
+import { auth } from '@/auth';
+import { getUserRole } from '@/lib/auth-helpers';
+import { LogoutButton } from './logout-button';
 
-type UserRole = 'sponsor' | 'publisher' | null;
+export async function Nav() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-export function Nav() {
-  const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
-  const [role, setRole] = useState<UserRole>(null);
+  let role: 'sponsor' | 'publisher' | null = null;
 
-  // TODO: Convert to server component and fetch role server-side
-  // Fetch user role from backend when user is logged in
-  useEffect(() => {
-    if (user?.id) {
-      fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291'}/api/auth/role/${user.id}`
-      )
-        .then((res) => res.json())
-        .then((data) => setRole(data.role))
-        .catch(() => setRole(null));
-    } else {
-      setRole(null);
-    }
-  }, [user?.id]);
-
-  // TODO: Add active link styling using usePathname() from next/navigation
-  // The current page's link should be highlighted differently
+  if (user?.id) {
+    const roleData = await getUserRole(user.id);
+    role = roleData.role;
+  }
 
   return (
     <header className="border-b border-[--color-border]">
@@ -61,27 +49,12 @@ export function Nav() {
             </Link>
           )}
 
-          {isPending ? (
-            <span className="text-[--color-muted]">...</span>
-          ) : user ? (
+          {user ? (
             <div className="flex items-center gap-4">
               <span className="text-sm text-[--color-muted]">
                 {user.name} {role && `(${role})`}
               </span>
-              <button
-                onClick={async () => {
-                  await authClient.signOut({
-                    fetchOptions: {
-                      onSuccess: () => {
-                        window.location.href = '/';
-                      },
-                    },
-                  });
-                }}
-                className="rounded bg-gray-600 px-3 py-1.5 text-sm text-white hover:bg-gray-500"
-              >
-                Logout
-              </button>
+              <LogoutButton />
             </div>
           ) : (
             <Link
