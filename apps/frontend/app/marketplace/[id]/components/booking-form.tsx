@@ -19,19 +19,19 @@ export function BookingForm({ adSlotId, sponsorName }: BookingFormProps) {
 
   if (bookState.success) {
     return (
-      <div className="mt-6 rounded-2xl border border-[--color-success-20] bg-[--color-success-subtle] p-6">
-        <h3 className="font-semibold text-[--color-success]">Placement Booked!</h3>
-        <p className="mt-1 text-sm text-[--color-success] opacity-80">
+      <div className="mt-6 rounded-2xl border border-[var(--color-success-20)] bg-[var(--color-success-subtle)] p-6">
+        <h3 className="font-semibold text-[var(--color-success)]">Placement Booked!</h3>
+        <p className="mt-1 text-sm text-[var(--color-success)] opacity-80">
           Your request has been submitted. The publisher will be in touch soon.
         </p>
         <form action={unbookAction} className="mt-4">
           <input type="hidden" name="adSlotId" value={adSlotId} />
           {unbookState.error && (
-            <p className="mb-2 text-sm text-[--color-error]">{unbookState.error}</p>
+            <p className="mb-2 text-sm text-[var(--color-error)]">{unbookState.error}</p>
           )}
           <SubmitButton
             pendingText="Removing..."
-            className="cursor-pointer text-sm text-[--color-success] underline hover:opacity-80"
+            className="cursor-pointer text-sm text-[var(--color-success)] underline hover:opacity-80"
           >
             Remove Booking (reset for testing)
           </SubmitButton>
@@ -41,7 +41,7 @@ export function BookingForm({ adSlotId, sponsorName }: BookingFormProps) {
   }
 
   return (
-    <div className="mt-6 border-t border-[--color-border] pt-6">
+    <div className="mt-6 border-t border-[var(--color-border)] pt-6">
       <h2 className="mb-4 text-xl font-semibold">Request This Placement</h2>
 
       <form action={bookAction} className="space-y-4">
@@ -51,7 +51,7 @@ export function BookingForm({ adSlotId, sponsorName }: BookingFormProps) {
           <label className="form-label">
             Your Company
           </label>
-          <p className="font-medium text-[--color-text-primary]">{sponsorName}</p>
+          <p className="font-medium text-[var(--color-text-primary)]">{sponsorName}</p>
         </div>
 
         <div>
@@ -70,7 +70,7 @@ export function BookingForm({ adSlotId, sponsorName }: BookingFormProps) {
         </div>
 
         {bookState.error && (
-          <p className="text-sm text-[--color-error]">{bookState.error}</p>
+          <p className="text-sm text-[var(--color-error)]">{bookState.error}</p>
         )}
 
         <SubmitButton

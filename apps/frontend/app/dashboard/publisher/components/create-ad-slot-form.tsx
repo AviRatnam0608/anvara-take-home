@@ -40,12 +40,12 @@ export function CreateAdSlotForm() {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2 className="mb-4 text-lg font-bold text-[--color-text-primary]">
+        <h2 className="mb-4 text-lg font-bold text-[var(--color-text-primary)]">
           Create New Ad Slot
         </h2>
 
         {state.error && (
-          <div className="alert-error mb-4 rounded-[--radius-sm] p-3">
+          <div className="alert-error mb-4 rounded-[var(--radius-sm)] p-3">
             {state.error}
           </div>
         )}
@@ -57,14 +57,14 @@ export function CreateAdSlotForm() {
               htmlFor="create-name"
               className="form-label"
             >
-              Name <span className="text-[--color-error]">*</span>
+              Name <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="create-name"
               name="name"
               type="text"
               placeholder="e.g. Header Banner"
-              className={state.fieldErrors?.name ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.name ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.name && (
               <p className="form-error-text">{state.fieldErrors.name}</p>
@@ -93,12 +93,12 @@ export function CreateAdSlotForm() {
               htmlFor="create-type"
               className="form-label"
             >
-              Type <span className="text-[--color-error]">*</span>
+              Type <span className="text-[var(--color-error)]">*</span>
             </label>
             <select
               id="create-type"
               name="type"
-              className={state.fieldErrors?.type ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.type ? 'border-[var(--color-error)]' : ''}
             >
               <option value="">Select a type...</option>
               {AD_SLOT_TYPES.map((t) => (
@@ -118,7 +118,7 @@ export function CreateAdSlotForm() {
               htmlFor="create-basePrice"
               className="form-label"
             >
-              Base Price ($/mo) <span className="text-[--color-error]">*</span>
+              Base Price ($/mo) <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="create-basePrice"
@@ -127,7 +127,7 @@ export function CreateAdSlotForm() {
               min="0.01"
               step="0.01"
               placeholder="e.g. 500"
-              className={state.fieldErrors?.basePrice ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.basePrice ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.basePrice && (
               <p className="form-error-text">{state.fieldErrors.basePrice}</p>

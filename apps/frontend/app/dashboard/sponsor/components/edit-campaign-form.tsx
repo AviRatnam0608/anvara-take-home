@@ -32,10 +32,10 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2 className="mb-4 text-lg font-bold text-[--color-text-primary]">Edit Campaign</h2>
+        <h2 className="mb-4 text-lg font-bold text-[var(--color-text-primary)]">Edit Campaign</h2>
 
         {state.error && (
-          <div className="alert-error mb-4 rounded-[--radius-sm] p-3">
+          <div className="alert-error mb-4 rounded-[var(--radius-sm)] p-3">
             {state.error}
           </div>
         )}
@@ -49,14 +49,14 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
               htmlFor="edit-campaign-name"
               className="form-label"
             >
-              Name <span className="text-[--color-error]">*</span>
+              Name <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="edit-campaign-name"
               name="name"
               type="text"
               defaultValue={campaign.name}
-              className={state.fieldErrors?.name ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.name ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.name && (
               <p className="form-error-text">{state.fieldErrors.name}</p>
@@ -85,7 +85,7 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
               htmlFor="edit-campaign-budget"
               className="form-label"
             >
-              Budget ($) <span className="text-[--color-error]">*</span>
+              Budget ($) <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="edit-campaign-budget"
@@ -94,7 +94,7 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
               min="0.01"
               step="0.01"
               defaultValue={campaign.budget}
-              className={state.fieldErrors?.budget ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.budget ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.budget && (
               <p className="form-error-text">{state.fieldErrors.budget}</p>
@@ -113,7 +113,7 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
               id="edit-campaign-status"
               name="status"
               defaultValue={campaign.status}
-              className={state.fieldErrors?.status ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.status ? 'border-[var(--color-error)]' : ''}
             >
               {CAMPAIGN_STATUSES.map((s) => (
                 <option key={s} value={s}>
@@ -132,14 +132,14 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
               htmlFor="edit-campaign-startDate"
               className="form-label"
             >
-              Start Date <span className="text-[--color-error]">*</span>
+              Start Date <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="edit-campaign-startDate"
               name="startDate"
               type="date"
               defaultValue={toDateInput(campaign.startDate)}
-              className={state.fieldErrors?.startDate ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.startDate ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.startDate && (
               <p className="form-error-text">{state.fieldErrors.startDate}</p>
@@ -152,14 +152,14 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
               htmlFor="edit-campaign-endDate"
               className="form-label"
             >
-              End Date <span className="text-[--color-error]">*</span>
+              End Date <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="edit-campaign-endDate"
               name="endDate"
               type="date"
               defaultValue={toDateInput(campaign.endDate)}
-              className={state.fieldErrors?.endDate ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.endDate ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.endDate && (
               <p className="form-error-text">{state.fieldErrors.endDate}</p>

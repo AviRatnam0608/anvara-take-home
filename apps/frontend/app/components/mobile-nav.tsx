@@ -41,7 +41,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
       {/* Hamburger button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="btn btn-ghost min-h-[44px] min-w-[44px] rounded-[--radius-sm] justify-center"
+        className="btn btn-ghost min-h-[44px] min-w-[44px] rounded-[var(--radius-sm)] justify-center"
         aria-label="Open menu"
         aria-expanded={isOpen}
       >
@@ -60,17 +60,17 @@ export function MobileNav({ user, role }: MobileNavProps) {
 
           {/* Sidebar */}
           <nav
-            className="fixed right-0 top-0 z-50 flex h-full w-72 flex-col border-l border-[--color-border] bg-[--color-bg-overlay] p-6"
+            className="fixed right-0 top-0 z-50 flex h-full w-72 flex-col border-l border-[var(--color-border)] bg-[var(--color-bg-overlay)] p-6"
             style={{ animation: 'slideInFromRight 0.3s ease-out' }}
             role="dialog"
             aria-label="Mobile navigation"
           >
             {/* Close button */}
             <div className="mb-8 flex items-center justify-between">
-              <span className="text-lg font-semibold text-[--color-text-primary]">Menu</span>
+              <span className="text-lg font-semibold text-[var(--color-text-primary)]">Menu</span>
               <button
                 onClick={() => setIsOpen(false)}
-                className="btn btn-ghost min-h-[44px] min-w-[44px] rounded-[--radius-sm] justify-center"
+                className="btn btn-ghost min-h-[44px] min-w-[44px] rounded-[var(--radius-sm)] justify-center"
                 aria-label="Close menu"
               >
                 <X size={24} />
@@ -81,7 +81,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
             <div className="flex flex-1 flex-col gap-1">
               <Link
                 href="/marketplace"
-                className="btn btn-ghost w-full justify-start gap-3 rounded-[--radius-md] px-4 py-3 text-base font-medium"
+                className="btn btn-ghost w-full justify-start gap-3 rounded-[var(--radius-md)] px-4 py-3 text-base font-medium"
               >
                 <Storefront size={20} />
                 Marketplace
@@ -90,7 +90,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
               {user && role === 'sponsor' && (
                 <Link
                   href="/dashboard/sponsor"
-                  className="btn btn-ghost w-full justify-start gap-3 rounded-[--radius-md] px-4 py-3 text-base font-medium"
+                  className="btn btn-ghost w-full justify-start gap-3 rounded-[var(--radius-md)] px-4 py-3 text-base font-medium"
                 >
                   <Megaphone size={20} />
                   My Campaigns
@@ -100,7 +100,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
               {user && role === 'publisher' && (
                 <Link
                   href="/dashboard/publisher"
-                  className="btn btn-ghost w-full justify-start gap-3 rounded-[--radius-md] px-4 py-3 text-base font-medium"
+                  className="btn btn-ghost w-full justify-start gap-3 rounded-[var(--radius-md)] px-4 py-3 text-base font-medium"
                 >
                   <Layout size={20} />
                   My Ad Slots
@@ -109,11 +109,11 @@ export function MobileNav({ user, role }: MobileNavProps) {
             </div>
 
             {/* User section at bottom */}
-            <div className="border-t border-[--color-border] pt-4">
+            <div className="border-t border-[var(--color-border)] pt-4">
               {user ? (
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-[--color-text-primary]">{user.name}</span>
+                    <span className="text-sm font-medium text-[var(--color-text-primary)]">{user.name}</span>
                     {role && (
                       <span className="role-badge">
                         {role}
@@ -125,7 +125,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
               ) : (
                 <Link
                   href="/login"
-                  className="btn btn-primary btn-md min-h-[44px] rounded-[--radius-md] px-5 py-2.5"
+                  className="btn btn-primary btn-md min-h-[44px] rounded-[var(--radius-md)] px-5 py-2.5"
                 >
                   Login
                 </Link>

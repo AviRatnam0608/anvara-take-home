@@ -35,25 +35,25 @@ describe('CampaignCard', () => {
   it('applies correct class for ACTIVE status', () => {
     render(<CampaignCard campaign={baseCampaign} />);
     const badge = screen.getByText('Active');
-    expect(badge.className).toContain('bg-[--color-success-subtle]');
+    expect(badge.className).toContain('bg-[var(--color-success-subtle)]');
   });
 
   it('applies correct class for DRAFT status', () => {
     render(<CampaignCard campaign={{ ...baseCampaign, status: 'DRAFT' }} />);
     const badge = screen.getByText('Draft');
-    expect(badge.className).toContain('bg-[--color-bg-input]');
+    expect(badge.className).toContain('bg-[var(--color-bg-input)]');
   });
 
   it('applies correct class for PAUSED status', () => {
     render(<CampaignCard campaign={{ ...baseCampaign, status: 'PAUSED' }} />);
     const badge = screen.getByText('Paused');
-    expect(badge.className).toContain('bg-[--color-warning-subtle]');
+    expect(badge.className).toContain('bg-[var(--color-warning-subtle)]');
   });
 
   it('applies correct class for COMPLETED status', () => {
     render(<CampaignCard campaign={{ ...baseCampaign, status: 'COMPLETED' }} />);
     const badge = screen.getByText('Completed');
-    expect(badge.className).toContain('bg-[--color-primary-subtle]');
+    expect(badge.className).toContain('bg-[var(--color-primary-subtle)]');
   });
 
   it('renders description when provided', () => {

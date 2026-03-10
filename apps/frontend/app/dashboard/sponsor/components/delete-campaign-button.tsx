@@ -34,7 +34,7 @@ export function DeleteCampaignButton({ campaignId, campaignName }: DeleteCampaig
       <input type="hidden" name="id" value={campaignId} />
       <SubmitButton
         pendingText="Deleting..."
-        className="btn btn-danger btn-md cursor-pointer gap-1.5 rounded-[--radius-sm] px-3"
+        className="btn btn-danger btn-md cursor-pointer gap-1.5 rounded-[var(--radius-sm)] px-3"
       >
         <TrashSimple size={16} />
         Delete

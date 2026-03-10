@@ -13,10 +13,10 @@ export function AdSlotList({ adSlots }: AdSlotListProps) {
         <Layout
           size={48}
           weight="duotone"
-          className="mx-auto mb-4 text-[--color-text-muted]"
+          className="mx-auto mb-4 text-[var(--color-text-muted)]"
         />
-        <h3 className="text-lg font-semibold text-[--color-text-primary]">No ad slots yet</h3>
-        <p className="mt-1 text-sm text-[--color-text-secondary]">
+        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">No ad slots yet</h3>
+        <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
           Create your first ad slot to start earning from your content.
         </p>
       </div>

@@ -40,14 +40,14 @@ export default async function SponsorDashboard() {
   return (
     <div className="animate-fade-in space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-[--color-text-primary]">
+        <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text-primary)]">
           My Campaigns
         </h1>
         <CreateCampaignForm />
       </div>
 
       {error ? (
-        <div className="alert-error rounded-[--radius-md]">
+        <div className="alert-error rounded-[var(--radius-md)]">
           <p className="font-medium">Unable to load campaigns</p>
           <p className="mt-1 text-sm opacity-80">{error}</p>
         </div>

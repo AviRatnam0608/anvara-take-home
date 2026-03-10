@@ -38,12 +38,12 @@ export function CreateCampaignForm() {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2 className="mb-4 text-lg font-bold text-[--color-text-primary]">
+        <h2 className="mb-4 text-lg font-bold text-[var(--color-text-primary)]">
           Create New Campaign
         </h2>
 
         {state.error && (
-          <div className="alert-error mb-4 rounded-[--radius-sm] p-3">
+          <div className="alert-error mb-4 rounded-[var(--radius-sm)] p-3">
             {state.error}
           </div>
         )}
@@ -55,14 +55,14 @@ export function CreateCampaignForm() {
               htmlFor="campaign-name"
               className="form-label"
             >
-              Name <span className="text-[--color-error]">*</span>
+              Name <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="campaign-name"
               name="name"
               type="text"
               placeholder="e.g. Summer Sale 2025"
-              className={state.fieldErrors?.name ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.name ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.name && (
               <p className="form-error-text">{state.fieldErrors.name}</p>
@@ -91,7 +91,7 @@ export function CreateCampaignForm() {
               htmlFor="campaign-budget"
               className="form-label"
             >
-              Budget ($) <span className="text-[--color-error]">*</span>
+              Budget ($) <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="campaign-budget"
@@ -100,7 +100,7 @@ export function CreateCampaignForm() {
               min="0.01"
               step="0.01"
               placeholder="e.g. 10000"
-              className={state.fieldErrors?.budget ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.budget ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.budget && (
               <p className="form-error-text">{state.fieldErrors.budget}</p>
@@ -113,13 +113,13 @@ export function CreateCampaignForm() {
               htmlFor="campaign-startDate"
               className="form-label"
             >
-              Start Date <span className="text-[--color-error]">*</span>
+              Start Date <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="campaign-startDate"
               name="startDate"
               type="date"
-              className={state.fieldErrors?.startDate ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.startDate ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.startDate && (
               <p className="form-error-text">{state.fieldErrors.startDate}</p>
@@ -132,13 +132,13 @@ export function CreateCampaignForm() {
               htmlFor="campaign-endDate"
               className="form-label"
             >
-              End Date <span className="text-[--color-error]">*</span>
+              End Date <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="campaign-endDate"
               name="endDate"
               type="date"
-              className={state.fieldErrors?.endDate ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.endDate ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.endDate && (
               <p className="form-error-text">{state.fieldErrors.endDate}</p>

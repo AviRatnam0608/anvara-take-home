@@ -23,7 +23,7 @@ export async function Nav() {
     <header className="glass sticky top-0 z-40">
       <nav className="container-nav">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-[--color-primary]">
+        <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-[var(--color-primary)]">
           <Hexagon size={28} weight="duotone" />
           Anvara
         </Link>
@@ -45,10 +45,10 @@ export async function Nav() {
             </Link>
           )}
 
-          <div className="ml-3 border-l border-[--color-border] pl-4">
+          <div className="ml-3 border-l border-[var(--color-border)] pl-4">
             {user ? (
               <div className="flex items-center gap-3">
-                <span className="text-sm text-[--color-text-secondary]">{user.name}</span>
+                <span className="text-sm text-[var(--color-text-secondary)]">{user.name}</span>
                 {role && (
                   <span className="role-badge">
                     {role}

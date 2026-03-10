@@ -9,7 +9,7 @@ export default async function MarketplacePage() {
     <div className="animate-fade-in space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Marketplace</h1>
-        <p className="mt-1 text-[--color-text-secondary]">
+        <p className="mt-1 text-[var(--color-text-secondary)]">
           Browse available ad slots from our publishers
         </p>
       </div>

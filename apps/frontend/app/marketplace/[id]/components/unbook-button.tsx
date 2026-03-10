@@ -19,11 +19,11 @@ export function UnbookButton({ adSlotId }: UnbookButtonProps) {
     <form action={formAction} className="inline">
       <input type="hidden" name="adSlotId" value={adSlotId} />
       {state.error && (
-        <span className="mr-2 text-sm text-[--color-error]">{state.error}</span>
+        <span className="mr-2 text-sm text-[var(--color-error)]">{state.error}</span>
       )}
       <SubmitButton
         pendingText="Resetting..."
-        className="inline-flex cursor-pointer items-center gap-1 text-sm text-[--color-primary] underline transition-colors hover:text-[--color-primary-hover]"
+        className="inline-flex cursor-pointer items-center gap-1 text-sm text-[var(--color-primary)] underline transition-colors hover:text-[var(--color-primary-hover)]"
       >
         <ArrowCounterClockwise size={14} />
         Reset listing

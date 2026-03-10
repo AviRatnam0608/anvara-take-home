@@ -26,14 +26,14 @@ export default function Home() {
 
         <h1 className="relative text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
           The Modern{' '}
-          <span className="bg-gradient-to-r from-[--color-primary] to-[--color-secondary] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] bg-clip-text text-transparent">
             Sponsorship
           </span>
           <br />
           Marketplace
         </h1>
 
-        <p className="relative mx-auto mt-6 max-w-lg text-lg text-[--color-text-secondary]">
+        <p className="relative mx-auto mt-6 max-w-lg text-lg text-[var(--color-text-secondary)]">
           Connect sponsors with premium publishers. Launch campaigns, manage ad slots, and grow your
           reach — all in one place.
         </p>
@@ -62,40 +62,40 @@ export default function Home() {
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
             Everything you need to grow
           </h2>
-          <p className="mt-2 text-[--color-text-secondary]">
+          <p className="mt-2 text-[var(--color-text-secondary)]">
             Powerful tools for both sponsors and publishers.
           </p>
         </div>
 
         <div className="card-grid">
           <div className="card p-8 hover:shadow-lg hover:shadow-black/5">
-            <div className="mb-4 inline-flex rounded-[--radius-md] bg-[--color-primary-subtle] p-3">
-              <Megaphone size={28} weight="duotone" className="text-[--color-primary]" />
+            <div className="mb-4 inline-flex rounded-[var(--radius-md)] bg-[var(--color-primary-subtle)] p-3">
+              <Megaphone size={28} weight="duotone" className="text-[var(--color-primary)]" />
             </div>
             <h3 className="text-lg font-semibold">For Sponsors</h3>
-            <p className="mt-2 text-sm leading-relaxed text-[--color-text-secondary]">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
               Create targeted campaigns, set budgets, and reach your audience through premium
               publisher placements.
             </p>
           </div>
 
           <div className="card p-8 hover:shadow-lg hover:shadow-black/5">
-            <div className="mb-4 inline-flex rounded-[--radius-md] bg-[--color-secondary-subtle] p-3">
-              <Layout size={28} weight="duotone" className="text-[--color-secondary]" />
+            <div className="mb-4 inline-flex rounded-[var(--radius-md)] bg-[var(--color-secondary-subtle)] p-3">
+              <Layout size={28} weight="duotone" className="text-[var(--color-secondary)]" />
             </div>
             <h3 className="text-lg font-semibold">For Publishers</h3>
-            <p className="mt-2 text-sm leading-relaxed text-[--color-text-secondary]">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
               List your ad slots, set your rates, and connect with sponsors looking for your
               audience.
             </p>
           </div>
 
           <div className="card p-8 hover:shadow-lg hover:shadow-black/5 sm:col-span-2 lg:col-span-1">
-            <div className="mb-4 inline-flex rounded-[--radius-md] bg-[--color-success-subtle] p-3">
-              <ChartLineUp size={28} weight="duotone" className="text-[--color-success]" />
+            <div className="mb-4 inline-flex rounded-[var(--radius-md)] bg-[var(--color-success-subtle)] p-3">
+              <ChartLineUp size={28} weight="duotone" className="text-[var(--color-success)]" />
             </div>
             <h3 className="text-lg font-semibold">Real-Time Analytics</h3>
-            <p className="mt-2 text-sm leading-relaxed text-[--color-text-secondary]">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
               Track impressions, clicks, and conversions. Optimize campaigns with data-driven
               insights.
             </p>
@@ -107,7 +107,7 @@ export default function Home() {
       <section className="mb-20">
         <div className="mb-10 text-center">
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">How it works</h2>
-          <p className="mt-2 text-[--color-text-secondary]">
+          <p className="mt-2 text-[var(--color-text-secondary)]">
             Get started in three simple steps.
           </p>
         </div>
@@ -136,11 +136,11 @@ export default function Home() {
             },
           ].map((item) => (
             <div key={item.step} className="text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[--color-primary-subtle] text-lg font-bold text-[--color-primary]">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-primary-subtle)] text-lg font-bold text-[var(--color-primary)]">
                 {item.step}
               </div>
               <h3 className="text-lg font-semibold">{item.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[--color-text-secondary]">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-secondary)]">
                 {item.description}
               </p>
             </div>
@@ -153,7 +153,7 @@ export default function Home() {
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Ready to start?
         </h2>
-        <p className="mx-auto mt-3 max-w-md text-[--color-text-secondary]">
+        <p className="mx-auto mt-3 max-w-md text-[var(--color-text-secondary)]">
           Join thousands of sponsors and publishers already using Anvara to grow their business.
         </p>
         <div className="mt-8 flex justify-center gap-4">

@@ -40,7 +40,7 @@ export default async function PublisherDashboard() {
   return (
     <div className="animate-fade-in space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-[--color-text-primary]">
+        <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text-primary)]">
           My Ad Slots
         </h1>
         <CreateAdSlotForm />

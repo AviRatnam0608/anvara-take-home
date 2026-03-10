@@ -27,10 +27,10 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2 className="mb-4 text-lg font-bold text-[--color-text-primary]">Edit Ad Slot</h2>
+        <h2 className="mb-4 text-lg font-bold text-[var(--color-text-primary)]">Edit Ad Slot</h2>
 
         {state.error && (
-          <div className="alert-error mb-4 rounded-[--radius-sm] p-3">
+          <div className="alert-error mb-4 rounded-[var(--radius-sm)] p-3">
             {state.error}
           </div>
         )}
@@ -44,14 +44,14 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
               htmlFor="edit-name"
               className="form-label"
             >
-              Name <span className="text-[--color-error]">*</span>
+              Name <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="edit-name"
               name="name"
               type="text"
               defaultValue={adSlot.name}
-              className={state.fieldErrors?.name ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.name ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.name && (
               <p className="form-error-text">{state.fieldErrors.name}</p>
@@ -80,13 +80,13 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
               htmlFor="edit-type"
               className="form-label"
             >
-              Type <span className="text-[--color-error]">*</span>
+              Type <span className="text-[var(--color-error)]">*</span>
             </label>
             <select
               id="edit-type"
               name="type"
               defaultValue={adSlot.type}
-              className={state.fieldErrors?.type ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.type ? 'border-[var(--color-error)]' : ''}
             >
               <option value="">Select a type...</option>
               {AD_SLOT_TYPES.map((t) => (
@@ -106,7 +106,7 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
               htmlFor="edit-basePrice"
               className="form-label"
             >
-              Base Price ($/mo) <span className="text-[--color-error]">*</span>
+              Base Price ($/mo) <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="edit-basePrice"
@@ -115,7 +115,7 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
               min="0.01"
               step="0.01"
               defaultValue={adSlot.basePrice}
-              className={state.fieldErrors?.basePrice ? 'border-[--color-error]' : ''}
+              className={state.fieldErrors?.basePrice ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.basePrice && (
               <p className="form-error-text">{state.fieldErrors.basePrice}</p>

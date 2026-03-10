@@ -13,10 +13,10 @@ export function CampaignList({ campaigns }: CampaignListProps) {
         <Megaphone
           size={48}
           weight="duotone"
-          className="mx-auto mb-4 text-[--color-text-muted]"
+          className="mx-auto mb-4 text-[var(--color-text-muted)]"
         />
-        <h3 className="text-lg font-semibold text-[--color-text-primary]">No campaigns yet</h3>
-        <p className="mt-1 text-sm text-[--color-text-secondary]">
+        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">No campaigns yet</h3>
+        <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
           Create your first campaign to start reaching publishers.
         </p>
       </div>

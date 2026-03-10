@@ -11,11 +11,11 @@ interface AdSlotCardProps {
 }
 
 const typeColors: Record<string, string> = {
-  DISPLAY: 'bg-[--color-primary-subtle] text-[--color-primary]',
-  VIDEO: 'bg-[--color-error-subtle] text-[--color-error]',
-  NATIVE: 'bg-[--color-success-subtle] text-[--color-success]',
-  NEWSLETTER: 'bg-[--color-secondary-subtle] text-[--color-secondary]',
-  PODCAST: 'bg-[--color-warning-subtle] text-[--color-warning]',
+  DISPLAY: 'bg-[var(--color-primary-subtle)] text-[var(--color-primary)]',
+  VIDEO: 'bg-[var(--color-error-subtle)] text-[var(--color-error)]',
+  NATIVE: 'bg-[var(--color-success-subtle)] text-[var(--color-success)]',
+  NEWSLETTER: 'bg-[var(--color-secondary-subtle)] text-[var(--color-secondary)]',
+  PODCAST: 'bg-[var(--color-warning-subtle)] text-[var(--color-warning)]',
 };
 
 export function AdSlotCard({ adSlot }: AdSlotCardProps) {
@@ -25,16 +25,16 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
     <>
       <div className="card">
         <div className="mb-3 flex items-start justify-between gap-3">
-          <h3 className="font-semibold text-[--color-text-primary]">{adSlot.name}</h3>
+          <h3 className="font-semibold text-[var(--color-text-primary)]">{adSlot.name}</h3>
           <span
-            className={`badge ${typeColors[adSlot.type] || 'bg-[--color-bg-input] text-[--color-text-muted]'}`}
+            className={`badge ${typeColors[adSlot.type] || 'bg-[var(--color-bg-input)] text-[var(--color-text-muted)]'}`}
           >
             {adSlot.type}
           </span>
         </div>
 
         {adSlot.description && (
-          <p className="mb-4 text-sm leading-relaxed text-[--color-text-secondary] line-clamp-2">
+          <p className="mb-4 text-sm leading-relaxed text-[var(--color-text-secondary)] line-clamp-2">
             {adSlot.description}
           </p>
         )}
@@ -42,27 +42,27 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-1.5 text-sm font-medium">
             <span
-              className={`inline-block h-2 w-2 rounded-full ${adSlot.isAvailable ? 'bg-[--color-success]' : 'bg-[--color-text-muted]'}`}
+              className={`inline-block h-2 w-2 rounded-full ${adSlot.isAvailable ? 'bg-[var(--color-success)]' : 'bg-[var(--color-text-muted)]'}`}
               aria-hidden="true"
             />
             <span
               className={
-                adSlot.isAvailable ? 'text-[--color-success]' : 'text-[--color-text-muted]'
+                adSlot.isAvailable ? 'text-[var(--color-success)]' : 'text-[var(--color-text-muted)]'
               }
             >
               {adSlot.isAvailable ? 'Available' : 'Booked'}
             </span>
           </span>
-          <span className="text-lg font-bold text-[--color-primary]">
+          <span className="text-lg font-bold text-[var(--color-primary)]">
             ${Number(adSlot.basePrice).toLocaleString()}/mo
           </span>
         </div>
 
         {/* Edit / Delete actions */}
-        <div className="mt-4 flex items-center gap-2 border-t border-[--color-border] pt-4">
+        <div className="mt-4 flex items-center gap-2 border-t border-[var(--color-border)] pt-4">
           <button
             onClick={() => setIsEditing(true)}
-            className="btn btn-md cursor-pointer gap-1.5 rounded-[--radius-sm] px-3 text-[--color-primary] hover:bg-[--color-primary-subtle]"
+            className="btn btn-md cursor-pointer gap-1.5 rounded-[var(--radius-sm)] px-3 text-[var(--color-primary)] hover:bg-[var(--color-primary-subtle)]"
           >
             <PencilSimple size={16} />
             Edit

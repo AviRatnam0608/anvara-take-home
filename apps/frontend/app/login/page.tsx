@@ -64,9 +64,9 @@ export default function LoginPage() {
       <div className="w-full max-w-md auth-card">
         {/* Header */}
         <div className="mb-8 text-center">
-          <User size={48} weight="duotone" className="mx-auto mb-3 text-[--color-primary]" />
+          <User size={48} weight="duotone" className="mx-auto mb-3 text-[var(--color-primary)]" />
           <h1 className="text-2xl font-bold">Login to Anvara</h1>
-          <p className="mt-1 text-sm text-[--color-text-secondary]">Select a role to continue</p>
+          <p className="mt-1 text-sm text-[var(--color-text-secondary)]">Select a role to continue</p>
         </div>
 
         {error && (
@@ -78,17 +78,17 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Role selector cards */}
           <fieldset>
-            <legend className="mb-3 text-sm font-medium text-[--color-text-secondary]">
+            <legend className="mb-3 text-sm font-medium text-[var(--color-text-secondary)]">
               Login as
             </legend>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setRole('sponsor')}
-                className={`flex flex-col items-center gap-2 rounded-[--radius-lg] border-2 p-5 text-center transition-all ${
+                className={`flex flex-col items-center gap-2 rounded-[var(--radius-lg)] border-2 p-5 text-center transition-all ${
                   role === 'sponsor'
-                    ? 'border-[--color-primary] bg-[--color-primary-subtle]'
-                    : 'border-[--color-border] bg-[--color-bg-input] hover:border-[--color-border-hover]'
+                    ? 'border-[var(--color-primary)] bg-[var(--color-primary-subtle)]'
+                    : 'border-[var(--color-border)] bg-[var(--color-bg-input)] hover:border-[var(--color-border-hover)]'
                 }`}
                 aria-pressed={role === 'sponsor'}
               >
@@ -96,24 +96,24 @@ export default function LoginPage() {
                   size={28}
                   weight="duotone"
                   className={
-                    role === 'sponsor' ? 'text-[--color-primary]' : 'text-[--color-text-muted]'
+                    role === 'sponsor' ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-muted)]'
                   }
                 />
                 <span
-                  className={`text-sm font-semibold ${role === 'sponsor' ? 'text-[--color-primary]' : 'text-[--color-text-primary]'}`}
+                  className={`text-sm font-semibold ${role === 'sponsor' ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-primary)]'}`}
                 >
                   Sponsor
                 </span>
-                <span className="text-xs text-[--color-text-muted]">sponsor@example.com</span>
+                <span className="text-xs text-[var(--color-text-muted)]">sponsor@example.com</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setRole('publisher')}
-                className={`flex flex-col items-center gap-2 rounded-[--radius-lg] border-2 p-5 text-center transition-all ${
+                className={`flex flex-col items-center gap-2 rounded-[var(--radius-lg)] border-2 p-5 text-center transition-all ${
                   role === 'publisher'
-                    ? 'border-[--color-secondary] bg-[--color-secondary-subtle]'
-                    : 'border-[--color-border] bg-[--color-bg-input] hover:border-[--color-border-hover]'
+                    ? 'border-[var(--color-secondary)] bg-[var(--color-secondary-subtle)]'
+                    : 'border-[var(--color-border)] bg-[var(--color-bg-input)] hover:border-[var(--color-border-hover)]'
                 }`}
                 aria-pressed={role === 'publisher'}
               >
@@ -121,15 +121,15 @@ export default function LoginPage() {
                   size={28}
                   weight="duotone"
                   className={
-                    role === 'publisher' ? 'text-[--color-secondary]' : 'text-[--color-text-muted]'
+                    role === 'publisher' ? 'text-[var(--color-secondary)]' : 'text-[var(--color-text-muted)]'
                   }
                 />
                 <span
-                  className={`text-sm font-semibold ${role === 'publisher' ? 'text-[--color-secondary]' : 'text-[--color-text-primary]'}`}
+                  className={`text-sm font-semibold ${role === 'publisher' ? 'text-[var(--color-secondary)]' : 'text-[var(--color-text-primary)]'}`}
                 >
                   Publisher
                 </span>
-                <span className="text-xs text-[--color-text-muted]">publisher@example.com</span>
+                <span className="text-xs text-[var(--color-text-muted)]">publisher@example.com</span>
               </button>
             </div>
           </fieldset>
