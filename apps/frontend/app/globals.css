@@ -136,16 +136,23 @@ textarea::placeholder {
 
 /* ─── Utility Classes ──────────────────────────────────────────── */
 .glass {
-  background: var(--color-glass-bg);
+  background: rgba(10, 10, 10, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-glass-border);
+}
+
+@media (prefers-color-scheme: light) {
+  .glass {
+    background: rgba(250, 250, 250, 0.85);
+  }
 }
 
 .modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 9999;
+  padding: 1rem;
 
   display: flex;
   align-items: center;
@@ -405,31 +412,27 @@ textarea::placeholder {
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(8px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
   }
   to {
     opacity: 1;
-    transform: scale(1);
   }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.4s ease-out both;
+  animation: fadeIn 0.4s ease-out forwards;
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.2s ease-out both;
+  animation: scaleIn 0.2s ease-out forwards;
 }
 
 /* Staggered children animation for grids */
