@@ -17,7 +17,7 @@ interface AdSlotGridProps {
 export function AdSlotGrid({ adSlots }: AdSlotGridProps) {
   if (adSlots.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-[--color-border] p-16 text-center">
+      <div className="empty-state-card">
         <MagnifyingGlass
           size={48}
           weight="duotone"
@@ -32,19 +32,19 @@ export function AdSlotGrid({ adSlots }: AdSlotGridProps) {
   }
 
   return (
-    <div className="stagger-children grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="stagger-children card-grid">
       {adSlots.map((slot) => (
         <Link
           key={slot.id}
           href={`/marketplace/${slot.id}`}
-          className="group block rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-6 transition-all duration-200 hover:border-[--color-border-hover] hover:shadow-lg hover:shadow-black/5"
+          className="group card-link"
         >
           <div className="mb-3 flex items-start justify-between gap-3">
             <h3 className="text-lg font-semibold text-[--color-text-primary] transition-colors group-hover:text-[--color-primary]">
               {slot.name}
             </h3>
             <span
-              className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${typeColors[slot.type] || 'bg-[--color-bg-input] text-[--color-text-muted]'}`}
+              className={`badge ${typeColors[slot.type] || 'bg-[--color-bg-input] text-[--color-text-muted]'}`}
             >
               {slot.type}
             </span>

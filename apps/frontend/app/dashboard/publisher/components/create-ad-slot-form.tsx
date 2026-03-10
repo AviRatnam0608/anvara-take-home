@@ -29,7 +29,7 @@ export function CreateAdSlotForm() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-[--radius-md] bg-[--color-primary] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[--color-primary-hover]"
+        className="btn btn-primary btn-md cursor-pointer"
       >
         <Plus size={18} weight="bold" />
         Add Ad Slot
@@ -39,13 +39,13 @@ export function CreateAdSlotForm() {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content w-full max-w-md">
+      <div className="modal-content">
         <h2 className="mb-4 text-lg font-bold text-[--color-text-primary]">
           Create New Ad Slot
         </h2>
 
         {state.error && (
-          <div className="mb-4 rounded-[--radius-sm] border border-[--color-error]/20 bg-[--color-error-subtle] p-3 text-sm text-[--color-error]">
+          <div className="alert-error mb-4 rounded-[--radius-sm] p-3">
             {state.error}
           </div>
         )}
@@ -55,7 +55,7 @@ export function CreateAdSlotForm() {
           <div>
             <label
               htmlFor="create-name"
-              className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
+              className="form-label"
             >
               Name <span className="text-[--color-error]">*</span>
             </label>
@@ -67,7 +67,7 @@ export function CreateAdSlotForm() {
               className={state.fieldErrors?.name ? 'border-[--color-error]' : ''}
             />
             {state.fieldErrors?.name && (
-              <p className="mt-1 text-xs text-[--color-error]">{state.fieldErrors.name}</p>
+              <p className="form-error-text">{state.fieldErrors.name}</p>
             )}
           </div>
 
@@ -75,7 +75,7 @@ export function CreateAdSlotForm() {
           <div>
             <label
               htmlFor="create-description"
-              className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
+              className="form-label"
             >
               Description
             </label>
@@ -91,7 +91,7 @@ export function CreateAdSlotForm() {
           <div>
             <label
               htmlFor="create-type"
-              className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
+              className="form-label"
             >
               Type <span className="text-[--color-error]">*</span>
             </label>
@@ -108,7 +108,7 @@ export function CreateAdSlotForm() {
               ))}
             </select>
             {state.fieldErrors?.type && (
-              <p className="mt-1 text-xs text-[--color-error]">{state.fieldErrors.type}</p>
+              <p className="form-error-text">{state.fieldErrors.type}</p>
             )}
           </div>
 
@@ -116,7 +116,7 @@ export function CreateAdSlotForm() {
           <div>
             <label
               htmlFor="create-basePrice"
-              className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
+              className="form-label"
             >
               Base Price ($/mo) <span className="text-[--color-error]">*</span>
             </label>
@@ -130,7 +130,7 @@ export function CreateAdSlotForm() {
               className={state.fieldErrors?.basePrice ? 'border-[--color-error]' : ''}
             />
             {state.fieldErrors?.basePrice && (
-              <p className="mt-1 text-xs text-[--color-error]">{state.fieldErrors.basePrice}</p>
+              <p className="form-error-text">{state.fieldErrors.basePrice}</p>
             )}
           </div>
 
@@ -140,7 +140,7 @@ export function CreateAdSlotForm() {
             <button
               type="button"
               onClick={handleCancel}
-              className="min-h-[44px] cursor-pointer rounded-[--radius-md] border border-[--color-border] px-4 py-2 font-semibold text-[--color-text-secondary] transition-colors hover:bg-[--color-bg-input]"
+              className="btn btn-secondary btn-md cursor-pointer"
             >
               Cancel
             </button>

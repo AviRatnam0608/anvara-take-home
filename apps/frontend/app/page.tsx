@@ -41,14 +41,14 @@ export default function Home() {
         <div className="relative mt-10 flex flex-col gap-4 sm:flex-row">
           <Link
             href="/login"
-            className="inline-flex min-h-[48px] items-center gap-2 rounded-[--radius-md] bg-[--color-primary] px-8 py-3.5 text-base font-semibold text-white transition-colors hover:bg-[--color-primary-hover]"
+            className="btn btn-primary btn-lg px-8"
           >
             Get Started
             <ArrowRight size={18} />
           </Link>
           <Link
             href="/marketplace"
-            className="inline-flex min-h-[48px] items-center gap-2 rounded-[--radius-md] border border-[--color-border] px-8 py-3.5 text-base font-medium text-[--color-text-primary] transition-colors hover:bg-[--color-glass-bg]"
+            className="btn btn-secondary btn-lg px-8"
           >
             <Storefront size={18} />
             Browse Marketplace
@@ -67,8 +67,8 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-8 transition-all duration-200 hover:border-[--color-border-hover] hover:shadow-lg hover:shadow-black/5">
+        <div className="card-grid">
+          <div className="card p-8 hover:shadow-lg hover:shadow-black/5">
             <div className="mb-4 inline-flex rounded-[--radius-md] bg-[--color-primary-subtle] p-3">
               <Megaphone size={28} weight="duotone" className="text-[--color-primary]" />
             </div>
@@ -79,7 +79,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-8 transition-all duration-200 hover:border-[--color-border-hover] hover:shadow-lg hover:shadow-black/5">
+          <div className="card p-8 hover:shadow-lg hover:shadow-black/5">
             <div className="mb-4 inline-flex rounded-[--radius-md] bg-[--color-secondary-subtle] p-3">
               <Layout size={28} weight="duotone" className="text-[--color-secondary]" />
             </div>
@@ -90,7 +90,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-8 transition-all duration-200 hover:border-[--color-border-hover] hover:shadow-lg hover:shadow-black/5 sm:col-span-2 lg:col-span-1">
+          <div className="card p-8 hover:shadow-lg hover:shadow-black/5 sm:col-span-2 lg:col-span-1">
             <div className="mb-4 inline-flex rounded-[--radius-md] bg-[--color-success-subtle] p-3">
               <ChartLineUp size={28} weight="duotone" className="text-[--color-success]" />
             </div>
@@ -149,7 +149,7 @@ export default function Home() {
       </section>
 
       {/* ─── CTA ─────────────────────────────────────────────────── */}
-      <section className="mb-12 rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-12 text-center">
+      <section className="card mb-12 p-12 text-center">
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Ready to start?
         </h2>
@@ -159,7 +159,7 @@ export default function Home() {
         <div className="mt-8 flex justify-center gap-4">
           <Link
             href="/login"
-            className="inline-flex min-h-[48px] items-center gap-2 rounded-[--radius-md] bg-[--color-primary] px-8 py-3.5 text-base font-semibold text-white transition-colors hover:bg-[--color-primary-hover]"
+            className="btn btn-primary btn-lg px-8"
           >
             Get Started Free
             <ArrowRight size={18} />

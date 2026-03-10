@@ -15,7 +15,7 @@ export function LogoutButton() {
           },
         });
       }}
-      className="inline-flex min-h-[44px] items-center gap-2 rounded-[--radius-md] border border-[--color-border] px-4 py-2 text-sm font-medium text-[--color-text-secondary] transition-colors hover:bg-[--color-glass-bg] hover:text-[--color-text-primary]"
+      className="btn btn-ghost btn-md"
       aria-label="Sign out"
     >
       <SignOut size={16} />

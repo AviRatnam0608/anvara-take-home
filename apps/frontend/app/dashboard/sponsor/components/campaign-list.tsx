@@ -9,7 +9,7 @@ interface CampaignListProps {
 export function CampaignList({ campaigns }: CampaignListProps) {
   if (campaigns.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-[--color-border] p-16 text-center">
+      <div className="empty-state-card">
         <Megaphone
           size={48}
           weight="duotone"
@@ -24,7 +24,7 @@ export function CampaignList({ campaigns }: CampaignListProps) {
   }
 
   return (
-    <div className="stagger-children grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="stagger-children card-grid">
       {campaigns.map((campaign) => (
         <CampaignCard key={campaign.id} campaign={campaign} />
       ))}

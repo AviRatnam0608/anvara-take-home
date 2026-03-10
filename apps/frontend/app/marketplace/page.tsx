@@ -15,7 +15,7 @@ export default async function MarketplacePage() {
       </div>
 
       {error ? (
-        <div className="rounded-[--radius-md] border border-[--color-error]/20 bg-[--color-error-subtle] p-4 text-[--color-error]">
+        <div className="alert-error">
           <p className="font-medium">Unable to load ad slots</p>
           <p className="mt-1 text-sm opacity-80">Please check your connection and try again.</p>
         </div>

@@ -9,7 +9,7 @@ interface AdSlotListProps {
 export function AdSlotList({ adSlots }: AdSlotListProps) {
   if (adSlots.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-[--color-border] p-16 text-center">
+      <div className="empty-state-card">
         <Layout
           size={48}
           weight="duotone"
@@ -24,7 +24,7 @@ export function AdSlotList({ adSlots }: AdSlotListProps) {
   }
 
   return (
-    <div className="stagger-children grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="stagger-children card-grid">
       {adSlots.map((slot) => (
         <AdSlotCard key={slot.id} adSlot={slot} />
       ))}

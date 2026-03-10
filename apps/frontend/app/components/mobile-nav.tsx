@@ -41,7 +41,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
       {/* Hamburger button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[--radius-sm] text-[--color-text-secondary] transition-colors hover:bg-[--color-glass-bg] hover:text-[--color-text-primary]"
+        className="btn btn-ghost min-h-[44px] min-w-[44px] rounded-[--radius-sm] justify-center"
         aria-label="Open menu"
         aria-expanded={isOpen}
       >
@@ -70,7 +70,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
               <span className="text-lg font-semibold text-[--color-text-primary]">Menu</span>
               <button
                 onClick={() => setIsOpen(false)}
-                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[--radius-sm] text-[--color-text-secondary] transition-colors hover:bg-[--color-glass-bg] hover:text-[--color-text-primary]"
+                className="btn btn-ghost min-h-[44px] min-w-[44px] rounded-[--radius-sm] justify-center"
                 aria-label="Close menu"
               >
                 <X size={24} />
@@ -81,7 +81,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
             <div className="flex flex-1 flex-col gap-1">
               <Link
                 href="/marketplace"
-                className="flex items-center gap-3 rounded-[--radius-md] px-4 py-3 text-base font-medium text-[--color-text-secondary] transition-colors hover:bg-[--color-glass-bg] hover:text-[--color-text-primary]"
+                className="btn btn-ghost w-full justify-start gap-3 rounded-[--radius-md] px-4 py-3 text-base font-medium"
               >
                 <Storefront size={20} />
                 Marketplace
@@ -90,7 +90,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
               {user && role === 'sponsor' && (
                 <Link
                   href="/dashboard/sponsor"
-                  className="flex items-center gap-3 rounded-[--radius-md] px-4 py-3 text-base font-medium text-[--color-text-secondary] transition-colors hover:bg-[--color-glass-bg] hover:text-[--color-text-primary]"
+                  className="btn btn-ghost w-full justify-start gap-3 rounded-[--radius-md] px-4 py-3 text-base font-medium"
                 >
                   <Megaphone size={20} />
                   My Campaigns
@@ -100,7 +100,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
               {user && role === 'publisher' && (
                 <Link
                   href="/dashboard/publisher"
-                  className="flex items-center gap-3 rounded-[--radius-md] px-4 py-3 text-base font-medium text-[--color-text-secondary] transition-colors hover:bg-[--color-glass-bg] hover:text-[--color-text-primary]"
+                  className="btn btn-ghost w-full justify-start gap-3 rounded-[--radius-md] px-4 py-3 text-base font-medium"
                 >
                   <Layout size={20} />
                   My Ad Slots
@@ -115,7 +115,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-[--color-text-primary]">{user.name}</span>
                     {role && (
-                      <span className="rounded-full bg-[--color-primary-subtle] px-2.5 py-0.5 text-xs font-medium text-[--color-primary]">
+                      <span className="role-badge">
                         {role}
                       </span>
                     )}
@@ -125,7 +125,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
               ) : (
                 <Link
                   href="/login"
-                  className="flex min-h-[44px] items-center justify-center rounded-[--radius-md] bg-[--color-primary] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[--color-primary-hover]"
+                  className="btn btn-primary btn-md min-h-[44px] rounded-[--radius-md] px-5 py-2.5"
                 >
                   Login
                 </Link>

@@ -23,11 +23,11 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
 
   return (
     <>
-      <div className="rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-6 transition-all duration-200 hover:border-[--color-border-hover]">
+      <div className="card">
         <div className="mb-3 flex items-start justify-between gap-3">
           <h3 className="font-semibold text-[--color-text-primary]">{adSlot.name}</h3>
           <span
-            className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${typeColors[adSlot.type] || 'bg-[--color-bg-input] text-[--color-text-muted]'}`}
+            className={`badge ${typeColors[adSlot.type] || 'bg-[--color-bg-input] text-[--color-text-muted]'}`}
           >
             {adSlot.type}
           </span>
@@ -62,7 +62,7 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
         <div className="mt-4 flex items-center gap-2 border-t border-[--color-border] pt-4">
           <button
             onClick={() => setIsEditing(true)}
-            className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 rounded-[--radius-sm] px-3 py-2 text-sm font-medium text-[--color-primary] transition-colors hover:bg-[--color-primary-subtle]"
+            className="btn btn-md cursor-pointer gap-1.5 rounded-[--radius-sm] px-3 text-[--color-primary] hover:bg-[--color-primary-subtle]"
           >
             <PencilSimple size={16} />
             Edit

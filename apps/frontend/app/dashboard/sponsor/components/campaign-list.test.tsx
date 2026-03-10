@@ -40,7 +40,7 @@ describe('CampaignList', () => {
 
   it('renders in a grid layout', () => {
     const { container } = render(<CampaignList campaigns={campaigns} />);
-    const grid = container.querySelector('.grid');
+    const grid = container.querySelector('.card-grid');
     expect(grid).toBeTruthy();
     expect(grid?.children).toHaveLength(2);
   });

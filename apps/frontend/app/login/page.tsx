@@ -61,7 +61,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-[70vh] items-center justify-center">
-      <div className="w-full max-w-md animate-fade-in rounded-2xl border border-[--color-border] bg-[--color-bg-raised] p-8 shadow-xl shadow-black/10">
+      <div className="w-full max-w-md auth-card">
         {/* Header */}
         <div className="mb-8 text-center">
           <User size={48} weight="duotone" className="mx-auto mb-3 text-[--color-primary]" />
@@ -70,7 +70,7 @@ export default function LoginPage() {
         </div>
 
         {error && (
-          <div className="mb-6 rounded-[--radius-md] border border-[--color-error]/20 bg-[--color-error-subtle] p-4 text-sm text-[--color-error]">
+          <div className="alert-error mb-6">
             {error}
           </div>
         )}
@@ -137,7 +137,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-[--radius-md] bg-[--color-primary] px-4 py-3 font-semibold text-white transition-colors hover:bg-[--color-primary-hover] disabled:opacity-50"
+            className="btn btn-primary btn-lg btn-block disabled:opacity-50"
           >
             {loading ? (
               <>

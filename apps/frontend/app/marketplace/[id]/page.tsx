@@ -88,7 +88,7 @@ export default async function AdSlotPage({ params }: Props) {
             )}
           </div>
           <span
-            className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium ${typeColors[adSlot.type] || 'bg-[--color-bg-input] text-[--color-text-muted]'}`}
+            className={`badge px-4 py-1.5 text-sm ${typeColors[adSlot.type] || 'bg-[--color-bg-input] text-[--color-text-muted]'}`}
           >
             {adSlot.type}
           </span>
@@ -109,8 +109,13 @@ export default async function AdSlotPage({ params }: Props) {
               </>
             ) : (
               <>
-                <span className="inline-block h-2 w-2 rounded-full bg-[--color-text-muted]" aria-hidden="true" />
-                <span className="text-sm font-medium text-[--color-text-muted]">Currently Booked</span>
+                <span
+                  className="inline-block h-2 w-2 rounded-full bg-[--color-text-muted]"
+                  aria-hidden="true"
+                />
+                <span className="text-sm font-medium text-[--color-text-muted]">
+                  Currently Booked
+                </span>
                 <span className="ml-2">
                   <UnbookButton adSlotId={adSlot.id} />
                 </span>

@@ -44,6 +44,10 @@
   --color-glass-bg: rgba(255, 255, 255, 0.05);
   --color-glass-border: rgba(255, 255, 255, 0.08);
 
+  /* Opacity variants */
+  --color-error-20: rgba(239, 68, 68, 0.2);
+  --color-success-20: rgba(34, 197, 94, 0.2);
+
   /* Radii */
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -83,6 +87,9 @@
 
     --color-glass-bg: rgba(0, 0, 0, 0.03);
     --color-glass-border: rgba(0, 0, 0, 0.06);
+
+    --color-error-20: rgba(220, 38, 38, 0.2);
+    --color-success-20: rgba(22, 163, 74, 0.2);
   }
 }
 
@@ -136,9 +143,18 @@ textarea::placeholder {
 }
 
 .modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+  pointer-events: auto;
 }
 
 .modal-content {
@@ -146,20 +162,266 @@ textarea::placeholder {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   padding: 32px;
+
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+
   box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
+/* ─── Component Classes ───────────────────────────────────────────
+ *  Placed in @layer components so Tailwind utility classes applied
+ *  via className can override these defaults (utilities layer > components layer).
+ * ─────────────────────────────────────────────────────────────────── */
+@layer components {
+  /* ─── Buttons ──────────────────────────────────────────────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    transition-property: color, background-color, border-color;
+    transition-timing-function: ease;
+    transition-duration: 150ms;
+  }
+  .btn:disabled {
+    opacity: 0.5;
+  }
+
+  .btn-primary {
+    background-color: var(--color-primary);
+    color: #fff;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-primary-hover);
+  }
+
+  .btn-secondary {
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--color-bg-input);
+  }
+
+  .btn-danger {
+    color: var(--color-error);
+  }
+  .btn-danger:hover:not(:disabled) {
+    background-color: var(--color-error-subtle);
+  }
+
+  .btn-ghost {
+    color: var(--color-text-secondary);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    background-color: var(--color-glass-bg);
+    color: var(--color-text-primary);
+  }
+
+  .btn-md {
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: var(--radius-md);
+  }
+
+  .btn-lg {
+    min-height: 48px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: var(--radius-md);
+  }
+
+  .btn-block {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* ─── Cards ────────────────────────────────────────────────────── */
+  .card {
+    border-radius: 1rem;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-raised);
+    padding: 1.5rem;
+    transition: all 0.2s;
+  }
+  .card:hover {
+    border-color: var(--color-border-hover);
+  }
+
+  .card-link {
+    display: block;
+    border-radius: 1rem;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-raised);
+    padding: 1.5rem;
+    transition: all 0.2s;
+  }
+  .card-link:hover {
+    border-color: var(--color-border-hover);
+    box-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.05),
+      0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  }
+
+  .empty-state-card {
+    border-radius: 1rem;
+    border: 1px dashed var(--color-border);
+    padding: 4rem;
+    text-align: center;
+  }
+
+  .auth-card {
+    border-radius: 1rem;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-raised);
+    padding: 2rem;
+  }
+
+  /* ─── Forms ────────────────────────────────────────────────────── */
+  .form-label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+  }
+
+  .form-error-text {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--color-error);
+  }
+
+  /* ─── Alerts ───────────────────────────────────────────────────── */
+  .alert-error {
+    border: 1px solid var(--color-error-20);
+    background-color: var(--color-error-subtle);
+    padding: 1rem;
+    font-size: 0.875rem;
+    color: var(--color-error);
+    border-radius: var(--radius-md);
+  }
+
+  /* ─── Badges ───────────────────────────────────────────────────── */
+  .badge {
+    flex-shrink: 0;
+    border-radius: 9999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .role-badge {
+    border-radius: 9999px;
+    padding: 0.125rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background-color: var(--color-primary-subtle);
+    color: var(--color-primary);
+  }
+
+  /* ─── Navigation ───────────────────────────────────────────────── */
+  .nav-link {
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    transition:
+      color 150ms,
+      background-color 150ms;
+  }
+  .nav-link:hover {
+    background-color: var(--color-glass-bg);
+    color: var(--color-text-primary);
+  }
+
+  /* ─── Layout ───────────────────────────────────────────────────── */
+  .container-main {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 72rem;
+    padding: 2rem 1rem;
+  }
+  @media (min-width: 640px) {
+    .container-main {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .container-main {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  .container-nav {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 72rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+  }
+  @media (min-width: 640px) {
+    .container-nav {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .container-nav {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  /* ─── Grid ─────────────────────────────────────────────────────── */
+  .card-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .card-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1024px) {
+    .card-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}
+
 /* ─── Animations ───────────────────────────────────────────────── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .animate-fade-in {
@@ -174,18 +436,42 @@ textarea::placeholder {
 .stagger-children > * {
   animation: fadeIn 0.4s ease-out both;
 }
-.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
-.stagger-children > *:nth-child(2) { animation-delay: 60ms; }
-.stagger-children > *:nth-child(3) { animation-delay: 120ms; }
-.stagger-children > *:nth-child(4) { animation-delay: 180ms; }
-.stagger-children > *:nth-child(5) { animation-delay: 240ms; }
-.stagger-children > *:nth-child(6) { animation-delay: 300ms; }
-.stagger-children > *:nth-child(7) { animation-delay: 360ms; }
-.stagger-children > *:nth-child(8) { animation-delay: 420ms; }
-.stagger-children > *:nth-child(9) { animation-delay: 480ms; }
-.stagger-children > *:nth-child(10) { animation-delay: 540ms; }
-.stagger-children > *:nth-child(11) { animation-delay: 600ms; }
-.stagger-children > *:nth-child(12) { animation-delay: 660ms; }
+.stagger-children > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.stagger-children > *:nth-child(2) {
+  animation-delay: 60ms;
+}
+.stagger-children > *:nth-child(3) {
+  animation-delay: 120ms;
+}
+.stagger-children > *:nth-child(4) {
+  animation-delay: 180ms;
+}
+.stagger-children > *:nth-child(5) {
+  animation-delay: 240ms;
+}
+.stagger-children > *:nth-child(6) {
+  animation-delay: 300ms;
+}
+.stagger-children > *:nth-child(7) {
+  animation-delay: 360ms;
+}
+.stagger-children > *:nth-child(8) {
+  animation-delay: 420ms;
+}
+.stagger-children > *:nth-child(9) {
+  animation-delay: 480ms;
+}
+.stagger-children > *:nth-child(10) {
+  animation-delay: 540ms;
+}
+.stagger-children > *:nth-child(11) {
+  animation-delay: 600ms;
+}
+.stagger-children > *:nth-child(12) {
+  animation-delay: 660ms;
+}
 
 /* ─── Scrollbar ────────────────────────────────────────────────── */
 ::-webkit-scrollbar {

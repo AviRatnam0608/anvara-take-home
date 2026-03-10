@@ -19,7 +19,7 @@ export function BookingForm({ adSlotId, sponsorName }: BookingFormProps) {
 
   if (bookState.success) {
     return (
-      <div className="mt-6 rounded-2xl border border-[--color-success]/20 bg-[--color-success-subtle] p-6">
+      <div className="mt-6 rounded-2xl border border-[--color-success-20] bg-[--color-success-subtle] p-6">
         <h3 className="font-semibold text-[--color-success]">Placement Booked!</h3>
         <p className="mt-1 text-sm text-[--color-success] opacity-80">
           Your request has been submitted. The publisher will be in touch soon.
@@ -48,7 +48,7 @@ export function BookingForm({ adSlotId, sponsorName }: BookingFormProps) {
         <input type="hidden" name="adSlotId" value={adSlotId} />
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-[--color-text-secondary]">
+          <label className="form-label">
             Your Company
           </label>
           <p className="font-medium text-[--color-text-primary]">{sponsorName}</p>
@@ -57,7 +57,7 @@ export function BookingForm({ adSlotId, sponsorName }: BookingFormProps) {
         <div>
           <label
             htmlFor="message"
-            className="mb-1 block text-sm font-medium text-[--color-text-secondary]"
+            className="form-label"
           >
             Message to Publisher (optional)
           </label>
@@ -75,7 +75,7 @@ export function BookingForm({ adSlotId, sponsorName }: BookingFormProps) {
 
         <SubmitButton
           pendingText="Booking..."
-          className="flex min-h-[48px] w-full cursor-pointer items-center justify-center gap-2 rounded-[--radius-md] bg-[--color-primary] px-4 py-3 font-semibold text-white transition-colors hover:bg-[--color-primary-hover] disabled:opacity-50"
+          className="btn btn-primary btn-lg btn-block cursor-pointer"
         >
           Book This Placement
         </SubmitButton>
