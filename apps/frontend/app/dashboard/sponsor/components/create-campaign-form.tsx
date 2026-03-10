@@ -12,10 +12,22 @@ export function CreateCampaignForm() {
   const [isOpen, setIsOpen] = useState(false);
   const [state, formAction] = useActionState(createCampaignAction, initialState);
 
-  // Close modal on success
+  // Controlled form fields — persist values across validation failures
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [budget, setBudget] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  // Close modal and reset form on success
   useEffect(() => {
     if (state.success) {
       setIsOpen(false);
+      setName('');
+      setDescription('');
+      setBudget('');
+      setStartDate('');
+      setEndDate('');
     }
   }, [state]);
 
@@ -62,6 +74,8 @@ export function CreateCampaignForm() {
               name="name"
               type="text"
               placeholder="e.g. Summer Sale 2025"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className={state.fieldErrors?.name ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.name && (
@@ -82,6 +96,8 @@ export function CreateCampaignForm() {
               name="description"
               placeholder="Optional campaign description"
               rows={2}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 
@@ -100,6 +116,8 @@ export function CreateCampaignForm() {
               min="0.01"
               step="0.01"
               placeholder="e.g. 10000"
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
               className={state.fieldErrors?.budget ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.budget && (
@@ -119,6 +137,8 @@ export function CreateCampaignForm() {
               id="campaign-startDate"
               name="startDate"
               type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
               className={state.fieldErrors?.startDate ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.startDate && (
@@ -138,6 +158,8 @@ export function CreateCampaignForm() {
               id="campaign-endDate"
               name="endDate"
               type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
               className={state.fieldErrors?.endDate ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.endDate && (

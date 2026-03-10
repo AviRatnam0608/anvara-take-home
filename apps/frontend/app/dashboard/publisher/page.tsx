@@ -27,13 +27,13 @@ export default async function PublisherDashboard() {
   let error: string | null = null;
 
   if (roleData.publisherId) {
-    const result = await serverApi<AdSlot[]>(
-      `/api/ad-slots?publisherId=${roleData.publisherId}`,
+    const result = await serverApi<{ data: AdSlot[] }>(
+      `/api/ad-slots?publisherId=${roleData.publisherId}&limit=50`,
     );
     if (result.error) {
       error = result.error;
     } else {
-      adSlots = result.data ?? [];
+      adSlots = result.data?.data ?? [];
     }
   }
 

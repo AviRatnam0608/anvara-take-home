@@ -11,9 +11,10 @@ const VALID_AD_SLOT_TYPES = ['DISPLAY', 'VIDEO', 'NATIVE', 'NEWSLETTER', 'PODCAS
 // GET /api/ad-slots - List ad slots
 // Public: returns all available ad slots (marketplace browsing)
 // Authenticated publisher with publisherId param: returns that publisher's ad slots
+// Supports: search, type, minPrice, maxPrice, page, limit
 router.get('/', async (req: AuthRequest, res: Response) => {
   try {
-    const { type, available, publisherId } = req.query;
+    const { type, available, publisherId, search, minPrice, maxPrice, page, limit } = req.query;
 
     // If a publisher is requesting their own ad slots (dashboard)
     const isOwnerRequest =
@@ -21,26 +22,61 @@ router.get('/', async (req: AuthRequest, res: Response) => {
       req.user.publisherId &&
       publisherId === req.user.publisherId;
 
-    const adSlots = await prisma.adSlot.findMany({
-      where: {
-        // Scoped to publisher's own slots when requested from dashboard
-        // Otherwise show all available slots for marketplace
-        ...(isOwnerRequest
-          ? { publisherId: req.user!.publisherId }
-          : { isAvailable: true }),
-        ...(type && {
-          type: type as string as 'DISPLAY' | 'VIDEO' | 'NATIVE' | 'NEWSLETTER' | 'PODCAST',
-        }),
-        ...(available === 'true' && { isAvailable: true }),
-      },
-      include: {
-        publisher: { select: { id: true, name: true, category: true, monthlyViews: true } },
-        _count: { select: { placements: true } },
-      },
-      orderBy: { basePrice: 'desc' },
-    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = {
+      ...(isOwnerRequest
+        ? { publisherId: req.user!.publisherId }
+        : { isAvailable: true }),
+      ...(type && {
+        type: type as string as 'DISPLAY' | 'VIDEO' | 'NATIVE' | 'NEWSLETTER' | 'PODCAST',
+      }),
+      ...(available === 'true' && { isAvailable: true }),
+    };
 
-    res.json(adSlots);
+    // Text search on name, description, and publisher name
+    if (search && typeof search === 'string' && search.trim()) {
+      const term = search.trim();
+      where.OR = [
+        { name: { contains: term, mode: 'insensitive' } },
+        { description: { contains: term, mode: 'insensitive' } },
+        { publisher: { name: { contains: term, mode: 'insensitive' } } },
+      ];
+    }
+
+    // Price range filters
+    if (minPrice || maxPrice) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const priceFilter: any = {};
+      if (minPrice && !isNaN(Number(minPrice))) priceFilter.gte = Number(minPrice);
+      if (maxPrice && !isNaN(Number(maxPrice))) priceFilter.lte = Number(maxPrice);
+      where.basePrice = priceFilter;
+    }
+
+    // Pagination
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const limitNum = Math.min(50, Math.max(1, parseInt(limit as string) || 12));
+    const skip = (pageNum - 1) * limitNum;
+
+    const [adSlots, total] = await Promise.all([
+      prisma.adSlot.findMany({
+        where,
+        include: {
+          publisher: { select: { id: true, name: true, category: true, monthlyViews: true } },
+          _count: { select: { placements: true } },
+        },
+        orderBy: { basePrice: 'desc' },
+        skip,
+        take: limitNum,
+      }),
+      prisma.adSlot.count({ where }),
+    ]);
+
+    res.json({
+      data: adSlots,
+      total,
+      page: pageNum,
+      totalPages: Math.ceil(total / limitNum),
+    });
   } catch (error) {
     console.error('Error fetching ad slots:', error);
     res.status(500).json({ error: 'Failed to fetch ad slots' });

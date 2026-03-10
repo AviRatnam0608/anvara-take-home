@@ -9,6 +9,7 @@ const mockAdSlotFindUnique = vi.fn();
 const mockAdSlotCreate = vi.fn();
 const mockAdSlotUpdate = vi.fn();
 const mockAdSlotDelete = vi.fn();
+const mockAdSlotCount = vi.fn();
 
 vi.mock('../db.js', () => ({
   prisma: {
@@ -19,6 +20,7 @@ vi.mock('../db.js', () => ({
       create: (...args: unknown[]) => mockAdSlotCreate(...args),
       update: (...args: unknown[]) => mockAdSlotUpdate(...args),
       delete: (...args: unknown[]) => mockAdSlotDelete(...args),
+      count: (...args: unknown[]) => mockAdSlotCount(...args),
     },
   },
 }));
@@ -52,13 +54,17 @@ const sampleSlot = {
 describe('GET /api/ad-slots', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('returns all available ad slots for unauthenticated requests (marketplace)', async () => {
+  it('returns paginated available ad slots for unauthenticated requests (marketplace)', async () => {
     mockAdSlotFindMany.mockResolvedValue([sampleSlot]);
+    mockAdSlotCount.mockResolvedValue(1);
 
     const res = await request(noAuthApp()).get('/api/ad-slots');
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveLength(1);
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.total).toBe(1);
+    expect(res.body.page).toBe(1);
+    expect(res.body.totalPages).toBe(1);
     expect(mockAdSlotFindMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({ isAvailable: true }),
@@ -68,10 +74,12 @@ describe('GET /api/ad-slots', () => {
 
   it('returns all available ad slots for sponsor user (marketplace)', async () => {
     mockAdSlotFindMany.mockResolvedValue([sampleSlot]);
+    mockAdSlotCount.mockResolvedValue(1);
 
     const res = await request(sponsorApp()).get('/api/ad-slots');
 
     expect(res.status).toBe(200);
+    expect(res.body.data).toHaveLength(1);
     expect(mockAdSlotFindMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({ isAvailable: true }),
@@ -81,15 +89,55 @@ describe('GET /api/ad-slots', () => {
 
   it('returns ad slots scoped to publisher when publisherId param matches', async () => {
     mockAdSlotFindMany.mockResolvedValue([sampleSlot]);
+    mockAdSlotCount.mockResolvedValue(1);
 
     const res = await request(publisherApp()).get('/api/ad-slots?publisherId=publisher-1');
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveLength(1);
-    expect(res.body[0].name).toBe('Header Banner');
+    expect(res.body.data).toHaveLength(1);
+    expect(res.body.data[0].name).toBe('Header Banner');
     expect(mockAdSlotFindMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({ publisherId: 'publisher-1' }),
+      }),
+    );
+  });
+
+  it('supports search, type, and price range filters', async () => {
+    mockAdSlotFindMany.mockResolvedValue([sampleSlot]);
+    mockAdSlotCount.mockResolvedValue(1);
+
+    const res = await request(noAuthApp()).get(
+      '/api/ad-slots?search=Banner&type=DISPLAY&minPrice=100&maxPrice=1000',
+    );
+
+    expect(res.status).toBe(200);
+    expect(mockAdSlotFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          type: 'DISPLAY',
+          basePrice: { gte: 100, lte: 1000 },
+          OR: expect.arrayContaining([
+            expect.objectContaining({ name: { contains: 'Banner', mode: 'insensitive' } }),
+          ]),
+        }),
+      }),
+    );
+  });
+
+  it('paginates results with page and limit params', async () => {
+    mockAdSlotFindMany.mockResolvedValue([sampleSlot]);
+    mockAdSlotCount.mockResolvedValue(25);
+
+    const res = await request(noAuthApp()).get('/api/ad-slots?page=2&limit=10');
+
+    expect(res.status).toBe(200);
+    expect(res.body.page).toBe(2);
+    expect(res.body.totalPages).toBe(3);
+    expect(mockAdSlotFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        skip: 10,
+        take: 10,
       }),
     );
   });
