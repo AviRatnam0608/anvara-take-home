@@ -1,9 +1,10 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useState } from 'react';
 import { updateAdSlotAction } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
 import type { ActionState, AdSlot } from '@/lib/types';
+import { formatCurrency, parseCurrency } from '@/lib/utils';
 
 const AD_SLOT_TYPES: AdSlot['type'][] = ['DISPLAY', 'VIDEO', 'NATIVE', 'NEWSLETTER', 'PODCAST'];
 
@@ -15,14 +16,18 @@ interface EditAdSlotFormProps {
 }
 
 export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
-  const [state, formAction] = useActionState(updateAdSlotAction, initialState);
+  const [state, formAction] = useActionState(
+    async (prevState: ActionState, formData: FormData) => {
+      const result = await updateAdSlotAction(prevState, formData);
+      if (result.success) onClose();
+      return result;
+    },
+    initialState,
+  );
 
-  // Close modal on success
-  useEffect(() => {
-    if (state.success) {
-      onClose();
-    }
-  }, [state, onClose]);
+  const [basePrice, setBasePrice] = useState(() =>
+    formatCurrency(adSlot.basePrice.toString()),
+  );
 
   return (
     <div className="modal-overlay">
@@ -40,10 +45,7 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
 
           {/* Name */}
           <div>
-            <label
-              htmlFor="edit-name"
-              className="form-label"
-            >
+            <label htmlFor="edit-name" className="form-label">
               Name <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
@@ -60,10 +62,7 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
 
           {/* Description */}
           <div>
-            <label
-              htmlFor="edit-description"
-              className="form-label"
-            >
+            <label htmlFor="edit-description" className="form-label">
               Description
             </label>
             <textarea
@@ -76,10 +75,7 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
 
           {/* Type */}
           <div>
-            <label
-              htmlFor="edit-type"
-              className="form-label"
-            >
+            <label htmlFor="edit-type" className="form-label">
               Type <span className="text-[var(--color-error)]">*</span>
             </label>
             <select
@@ -102,19 +98,18 @@ export function EditAdSlotForm({ adSlot, onClose }: EditAdSlotFormProps) {
 
           {/* Base Price */}
           <div>
-            <label
-              htmlFor="edit-basePrice"
-              className="form-label"
-            >
+            <label htmlFor="edit-basePrice" className="form-label">
               Base Price ($/mo) <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="edit-basePrice"
               name="basePrice"
-              type="number"
-              min="0.01"
-              step="0.01"
-              defaultValue={adSlot.basePrice}
+              type="text"
+              placeholder="e.g. 10000"
+              value={basePrice}
+              onChange={(e) => setBasePrice(parseCurrency(e.target.value))}
+              onFocus={(e) => setBasePrice(parseCurrency(e.target.value))}
+              onBlur={(e) => setBasePrice(formatCurrency(e.target.value))}
               className={state.fieldErrors?.basePrice ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.basePrice && (

@@ -1,9 +1,10 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useState } from 'react';
 import { updateCampaignAction } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
 import type { ActionState, Campaign } from '@/lib/types';
+import { formatCurrency, parseCurrency } from '@/lib/utils';
 
 const CAMPAIGN_STATUSES: Campaign['status'][] = ['DRAFT', 'ACTIVE', 'PAUSED', 'COMPLETED'];
 
@@ -20,14 +21,16 @@ function toDateInput(isoString: string): string {
 }
 
 export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
-  const [state, formAction] = useActionState(updateCampaignAction, initialState);
+  const [state, formAction] = useActionState(
+    async (prevState: ActionState, formData: FormData) => {
+      const result = await updateCampaignAction(prevState, formData);
+      if (result.success) onClose();
+      return result;
+    },
+    initialState,
+  );
 
-  // Close modal on success
-  useEffect(() => {
-    if (state.success) {
-      onClose();
-    }
-  }, [state, onClose]);
+  const [budget, setBudget] = useState(() => formatCurrency(campaign.budget.toString()));
 
   return (
     <div className="modal-overlay">
@@ -35,9 +38,7 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
         <h2 className="mb-4 text-lg font-bold text-[var(--color-text-primary)]">Edit Campaign</h2>
 
         {state.error && (
-          <div className="alert-error mb-4 rounded-[var(--radius-sm)] p-3">
-            {state.error}
-          </div>
+          <div className="alert-error mb-4 rounded-[var(--radius-sm)] p-3">{state.error}</div>
         )}
 
         <form action={formAction} className="space-y-4">
@@ -45,10 +46,7 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
 
           {/* Name */}
           <div>
-            <label
-              htmlFor="edit-campaign-name"
-              className="form-label"
-            >
+            <label htmlFor="edit-campaign-name" className="form-label">
               Name <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
@@ -58,17 +56,12 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
               defaultValue={campaign.name}
               className={state.fieldErrors?.name ? 'border-[var(--color-error)]' : ''}
             />
-            {state.fieldErrors?.name && (
-              <p className="form-error-text">{state.fieldErrors.name}</p>
-            )}
+            {state.fieldErrors?.name && <p className="form-error-text">{state.fieldErrors.name}</p>}
           </div>
 
           {/* Description */}
           <div>
-            <label
-              htmlFor="edit-campaign-description"
-              className="form-label"
-            >
+            <label htmlFor="edit-campaign-description" className="form-label">
               Description
             </label>
             <textarea
@@ -81,19 +74,18 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
 
           {/* Budget */}
           <div>
-            <label
-              htmlFor="edit-campaign-budget"
-              className="form-label"
-            >
+            <label htmlFor="edit-campaign-budget" className="form-label">
               Budget ($) <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="edit-campaign-budget"
               name="budget"
-              type="number"
-              min="0.01"
-              step="0.01"
-              defaultValue={campaign.budget}
+              type="text"
+              placeholder="e.g. 10000"
+              value={budget}
+              onChange={(e) => setBudget(parseCurrency(e.target.value))}
+              onFocus={(e) => setBudget(parseCurrency(e.target.value))}
+              onBlur={(e) => setBudget(formatCurrency(e.target.value))}
               className={state.fieldErrors?.budget ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.budget && (
@@ -103,10 +95,7 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
 
           {/* Status */}
           <div>
-            <label
-              htmlFor="edit-campaign-status"
-              className="form-label"
-            >
+            <label htmlFor="edit-campaign-status" className="form-label">
               Status
             </label>
             <select
@@ -128,10 +117,7 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
 
           {/* Start Date */}
           <div>
-            <label
-              htmlFor="edit-campaign-startDate"
-              className="form-label"
-            >
+            <label htmlFor="edit-campaign-startDate" className="form-label">
               Start Date <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
@@ -148,10 +134,7 @@ export function EditCampaignForm({ campaign, onClose }: EditCampaignFormProps) {
 
           {/* End Date */}
           <div>
-            <label
-              htmlFor="edit-campaign-endDate"
-              className="form-label"
-            >
+            <label htmlFor="edit-campaign-endDate" className="form-label">
               End Date <span className="text-[var(--color-error)]">*</span>
             </label>
             <input

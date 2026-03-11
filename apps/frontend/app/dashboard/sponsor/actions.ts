@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { serverApi } from '@/lib/server-api';
 import type { ActionState } from '@/lib/types';
+import { parseCurrency } from '@/lib/utils';
 
 const VALID_CAMPAIGN_STATUSES = [
   'DRAFT',
@@ -17,7 +18,7 @@ const VALID_CAMPAIGN_STATUSES = [
 // ─── Create ──────────────────────────────────────────────────────────
 export async function createCampaignAction(
   _prevState: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const name = formData.get('name')?.toString().trim() ?? '';
   const description = formData.get('description')?.toString().trim() || undefined;
@@ -29,9 +30,10 @@ export async function createCampaignAction(
   const fieldErrors: Record<string, string> = {};
   if (!name) fieldErrors.name = 'Name is required';
 
-  const budget = parseFloat(budgetRaw);
-  if (!budgetRaw || isNaN(budget) || budget <= 0)
+  const budget = parseFloat(parseCurrency(budgetRaw));
+  if (!budget || isNaN(budget) || budget <= 0) {
     fieldErrors.budget = 'Budget must be a positive number';
+  }
 
   if (!startDate) fieldErrors.startDate = 'Start date is required';
   if (!endDate) fieldErrors.endDate = 'End date is required';
@@ -65,7 +67,7 @@ export async function createCampaignAction(
 // ─── Update ──────────────────────────────────────────────────────────
 export async function updateCampaignAction(
   _prevState: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const id = formData.get('id')?.toString() ?? '';
   const name = formData.get('name')?.toString().trim() ?? '';
@@ -80,7 +82,7 @@ export async function updateCampaignAction(
   if (!id) return { error: 'Missing campaign ID' };
   if (!name) fieldErrors.name = 'Name is required';
 
-  const budget = parseFloat(budgetRaw);
+  const budget = parseFloat(parseCurrency(budgetRaw));
   if (!budgetRaw || isNaN(budget) || budget <= 0)
     fieldErrors.budget = 'Budget must be a positive number';
 
@@ -122,7 +124,7 @@ export async function updateCampaignAction(
 // ─── Delete ──────────────────────────────────────────────────────────
 export async function deleteCampaignAction(
   _prevState: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const id = formData.get('id')?.toString() ?? '';
   if (!id) return { error: 'Missing campaign ID' };

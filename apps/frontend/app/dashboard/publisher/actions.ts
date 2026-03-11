@@ -3,13 +3,14 @@
 import { revalidatePath } from 'next/cache';
 import { serverApi } from '@/lib/server-api';
 import type { ActionState } from '@/lib/types';
+import { parseCurrency } from '@/lib/utils';
 
 const VALID_AD_SLOT_TYPES = ['DISPLAY', 'VIDEO', 'NATIVE', 'NEWSLETTER', 'PODCAST'];
 
 // ─── Create ──────────────────────────────────────────────────────────
 export async function createAdSlotAction(
   _prevState: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const name = formData.get('name')?.toString().trim() ?? '';
   const description = formData.get('description')?.toString().trim() || undefined;
@@ -23,7 +24,7 @@ export async function createAdSlotAction(
   else if (!VALID_AD_SLOT_TYPES.includes(type))
     fieldErrors.type = `Invalid type. Must be one of: ${VALID_AD_SLOT_TYPES.join(', ')}`;
 
-  const basePrice = parseFloat(basePriceRaw);
+  const basePrice = parseFloat(parseCurrency(basePriceRaw));
   if (!basePriceRaw || isNaN(basePrice) || basePrice <= 0)
     fieldErrors.basePrice = 'Base price must be a positive number';
 
@@ -47,7 +48,7 @@ export async function createAdSlotAction(
 // ─── Update ──────────────────────────────────────────────────────────
 export async function updateAdSlotAction(
   _prevState: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const id = formData.get('id')?.toString() ?? '';
   const name = formData.get('name')?.toString().trim() ?? '';
@@ -63,7 +64,7 @@ export async function updateAdSlotAction(
   else if (!VALID_AD_SLOT_TYPES.includes(type))
     fieldErrors.type = `Invalid type. Must be one of: ${VALID_AD_SLOT_TYPES.join(', ')}`;
 
-  const basePrice = parseFloat(basePriceRaw);
+  const basePrice = parseFloat(parseCurrency(basePriceRaw));
   if (!basePriceRaw || isNaN(basePrice) || basePrice <= 0)
     fieldErrors.basePrice = 'Base price must be a positive number';
 
@@ -87,7 +88,7 @@ export async function updateAdSlotAction(
 // ─── Delete ──────────────────────────────────────────────────────────
 export async function deleteAdSlotAction(
   _prevState: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const id = formData.get('id')?.toString() ?? '';
   if (!id) return { error: 'Missing ad slot ID' };

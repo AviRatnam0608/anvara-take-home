@@ -1,16 +1,38 @@
 'use client';
 
-import { useActionState, useState, useEffect } from 'react';
+import { useActionState, useState } from 'react';
 import { createCampaignAction } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
 import { PlusIcon } from '@phosphor-icons/react';
 import type { ActionState } from '@/lib/types';
+import { formatCurrency, parseCurrency } from '@/lib/utils';
 
 const initialState: ActionState = {};
 
 export function CreateCampaignForm() {
   const [isOpen, setIsOpen] = useState(false);
-  const [state, formAction] = useActionState(createCampaignAction, initialState);
+
+  if (!isOpen) {
+    return (
+      <button onClick={() => setIsOpen(true)} className="btn btn-primary btn-md cursor-pointer">
+        <PlusIcon size={18} weight="bold" />
+        Add Campaign
+      </button>
+    );
+  }
+
+  return <CreateCampaignModal onClose={() => setIsOpen(false)} />;
+}
+
+function CreateCampaignModal({ onClose }: { onClose: () => void }) {
+  const [state, formAction] = useActionState(
+    async (prevState: ActionState, formData: FormData) => {
+      const result = await createCampaignAction(prevState, formData);
+      if (result.success) onClose();
+      return result;
+    },
+    initialState,
+  );
 
   // Controlled form fields — persist values across validation failures
   const [name, setName] = useState('');
@@ -18,35 +40,6 @@ export function CreateCampaignForm() {
   const [budget, setBudget] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-
-  // Close modal and reset form on success
-  useEffect(() => {
-    if (state.success) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsOpen(false);
-      setName('');
-      setDescription('');
-      setBudget('');
-      setStartDate('');
-      setEndDate('');
-    }
-  }, [state]);
-
-  function handleCancel() {
-    setIsOpen(false);
-  }
-
-  if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="btn btn-primary btn-md cursor-pointer"
-      >
-        <PlusIcon size={18} weight="bold" />
-        Add Campaign
-      </button>
-    );
-  }
 
   return (
     <div className="modal-overlay">
@@ -56,18 +49,13 @@ export function CreateCampaignForm() {
         </h2>
 
         {state.error && (
-          <div className="alert-error mb-4 rounded-[var(--radius-sm)] p-3">
-            {state.error}
-          </div>
+          <div className="alert-error mb-4 rounded-[var(--radius-sm)] p-3">{state.error}</div>
         )}
 
         <form action={formAction} className="space-y-4">
           {/* Name */}
           <div>
-            <label
-              htmlFor="campaign-name"
-              className="form-label"
-            >
+            <label htmlFor="campaign-name" className="form-label">
               Name <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
@@ -79,17 +67,12 @@ export function CreateCampaignForm() {
               onChange={(e) => setName(e.target.value)}
               className={state.fieldErrors?.name ? 'border-[var(--color-error)]' : ''}
             />
-            {state.fieldErrors?.name && (
-              <p className="form-error-text">{state.fieldErrors.name}</p>
-            )}
+            {state.fieldErrors?.name && <p className="form-error-text">{state.fieldErrors.name}</p>}
           </div>
 
           {/* Description */}
           <div>
-            <label
-              htmlFor="campaign-description"
-              className="form-label"
-            >
+            <label htmlFor="campaign-description" className="form-label">
               Description
             </label>
             <textarea
@@ -104,21 +87,18 @@ export function CreateCampaignForm() {
 
           {/* Budget */}
           <div>
-            <label
-              htmlFor="campaign-budget"
-              className="form-label"
-            >
+            <label htmlFor="campaign-budget" className="form-label">
               Budget ($) <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
               id="campaign-budget"
               name="budget"
-              type="number"
-              min="0.01"
-              step="0.01"
+              type="text"
               placeholder="e.g. 10000"
               value={budget}
-              onChange={(e) => setBudget(e.target.value)}
+              onChange={(e) => setBudget(parseCurrency(e.target.value))}
+              onFocus={(e) => setBudget(parseCurrency(e.target.value))}
+              onBlur={(e) => setBudget(formatCurrency(e.target.value))}
               className={state.fieldErrors?.budget ? 'border-[var(--color-error)]' : ''}
             />
             {state.fieldErrors?.budget && (
@@ -128,10 +108,7 @@ export function CreateCampaignForm() {
 
           {/* Start Date */}
           <div>
-            <label
-              htmlFor="campaign-startDate"
-              className="form-label"
-            >
+            <label htmlFor="campaign-startDate" className="form-label">
               Start Date <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
@@ -149,10 +126,7 @@ export function CreateCampaignForm() {
 
           {/* End Date */}
           <div>
-            <label
-              htmlFor="campaign-endDate"
-              className="form-label"
-            >
+            <label htmlFor="campaign-endDate" className="form-label">
               End Date <span className="text-[var(--color-error)]">*</span>
             </label>
             <input
@@ -173,7 +147,7 @@ export function CreateCampaignForm() {
             <SubmitButton pendingText="Creating...">Create Campaign</SubmitButton>
             <button
               type="button"
-              onClick={handleCancel}
+              onClick={onClose}
               className="btn btn-secondary btn-md cursor-pointer"
             >
               Cancel

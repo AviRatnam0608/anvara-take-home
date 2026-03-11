@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ListIcon, XIcon, StorefrontIcon, MegaphoneIcon, LayoutIcon } from '@phosphor-icons/react';
@@ -14,16 +14,13 @@ interface MobileNavProps {
 export function MobileNav({ user, role }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const prevPathname = useRef(pathname);
+  const [prevPathname, setPrevPathname] = useState(pathname);
 
-  // Close on route change (only when pathname actually changes)
-  useEffect(() => {
-    if (prevPathname.current !== pathname) {
-      prevPathname.current = pathname;
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsOpen(false);
-    }
-  }, [pathname]);
+  // Close on route change — derived state from props (React-recommended pattern)
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    if (isOpen) setIsOpen(false);
+  }
 
   // Prevent body scroll when open
   useEffect(() => {

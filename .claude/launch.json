@@ -5,7 +5,8 @@
       "name": "dev",
       "runtimeExecutable": "/Users/avinashratnam/.npm-global/bin/pnpm",
       "runtimeArgs": ["dev"],
-      "port": 3847
+      "port": 3847,
+      "autoPort": true
     }
   ]
 }

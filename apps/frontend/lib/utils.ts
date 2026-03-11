@@ -71,13 +71,25 @@ export const logger = {
   },
 };
 
+export const formatCurrency = (value: string) => {
+  if (!value) return '';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(Number(value));
+};
+
+export const parseCurrency = (value: string) => {
+  return value.replace(/[^0-9.]/g, '');
+};
+
 export function formatRelativeTime(
   date: Date | string | number,
   {
     now = new Date(),
     locale = 'en-US',
     timeZone,
-  }: { now?: Date; locale?: string; timeZone?: string } = {},
+  }: { now?: Date; locale?: string; timeZone?: string } = {}
 ): string {
   const then = new Date(date);
   if (Number.isNaN(then.getTime())) return '-';
@@ -89,7 +101,8 @@ export function formatRelativeTime(
   if (absSeconds < 60) return rtf.format(Math.round(diffMs / 1000), 'second');
   if (absSeconds < 60 * 60) return rtf.format(Math.round(diffMs / (1000 * 60)), 'minute');
   if (absSeconds < 60 * 60 * 24) return rtf.format(Math.round(diffMs / (1000 * 60 * 60)), 'hour');
-  if (absSeconds < 60 * 60 * 24 * 7) return rtf.format(Math.round(diffMs / (1000 * 60 * 60 * 24)), 'day');
+  if (absSeconds < 60 * 60 * 24 * 7)
+    return rtf.format(Math.round(diffMs / (1000 * 60 * 60 * 24)), 'day');
 
   return new Intl.DateTimeFormat(locale, {
     year: 'numeric',
