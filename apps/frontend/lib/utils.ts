@@ -71,16 +71,30 @@ export const logger = {
   },
 };
 
-// TODO: Add a proper date formatting utility
-// BUG: Doesn't handle timezone or invalid dates
-export function formatRelativeTime(date: Date | string | number): string {
-  const now = new Date();
+export function formatRelativeTime(
+  date: Date | string | number,
+  {
+    now = new Date(),
+    locale = 'en-US',
+    timeZone,
+  }: { now?: Date; locale?: string; timeZone?: string } = {},
+): string {
   const then = new Date(date);
-  const diff = now.getTime() - then.getTime();
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  if (Number.isNaN(then.getTime())) return '-';
 
-  if (days === 0) return 'Today';
-  if (days === 1) return 'Yesterday';
-  if (days < 7) return `${days} days ago`;
-  return then.toLocaleDateString();
+  const diffMs = then.getTime() - now.getTime();
+  const absSeconds = Math.abs(diffMs) / 1000;
+
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+  if (absSeconds < 60) return rtf.format(Math.round(diffMs / 1000), 'second');
+  if (absSeconds < 60 * 60) return rtf.format(Math.round(diffMs / (1000 * 60)), 'minute');
+  if (absSeconds < 60 * 60 * 24) return rtf.format(Math.round(diffMs / (1000 * 60 * 60)), 'hour');
+  if (absSeconds < 60 * 60 * 24 * 7) return rtf.format(Math.round(diffMs / (1000 * 60 * 60 * 24)), 'day');
+
+  return new Intl.DateTimeFormat(locale, {
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+    ...(timeZone ? { timeZone } : {}),
+  }).format(then);
 }

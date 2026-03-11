@@ -1,5 +1,7 @@
 import { Router, type Request, type Response, type IRouter } from 'express';
 import { prisma } from '../db.js';
+import type { AuthRequest } from '../auth.js';
+import { getParam } from '../utils/helpers.js';
 
 const router: IRouter = Router();
 
@@ -73,7 +75,44 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// TODO: Add PUT /api/sponsors/:id endpoint
-// Update sponsor details
+// PUT /api/sponsors/:id - Update sponsor (SPONSOR only, must own it)
+router.put('/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    if (req.user?.role !== 'SPONSOR' || !req.user.sponsorId) {
+      res.status(403).json({ error: 'Only sponsors can update sponsors' });
+      return;
+    }
+
+    const id = getParam(req.params.id);
+    if (id !== req.user.sponsorId) {
+      res.status(404).json({ error: 'Sponsor not found' });
+      return;
+    }
+
+    const { name, website, logo, description, industry } = req.body as Record<string, unknown>;
+
+    const updateData: Record<string, unknown> = {};
+    if (name !== undefined) updateData.name = name;
+    if (website !== undefined) updateData.website = website;
+    if (logo !== undefined) updateData.logo = logo;
+    if (description !== undefined) updateData.description = description;
+    if (industry !== undefined) updateData.industry = industry;
+
+    if (Object.keys(updateData).length === 0) {
+      res.status(400).json({ error: 'No valid fields provided for update' });
+      return;
+    }
+
+    const sponsor = await prisma.sponsor.update({
+      where: { id },
+      data: updateData,
+    });
+
+    res.json(sponsor);
+  } catch (error) {
+    console.error('Error updating sponsor:', error);
+    res.status(500).json({ error: 'Failed to update sponsor' });
+  }
+});
 
 export default router;
