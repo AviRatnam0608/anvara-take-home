@@ -3,7 +3,7 @@
 import { useActionState, useEffect } from 'react';
 import { deleteCampaignAction } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
-import { TrashSimple } from '@phosphor-icons/react';
+import { TrashSimpleIcon } from '@phosphor-icons/react';
 import type { ActionState } from '@/lib/types';
 
 const initialState: ActionState = {};
@@ -36,7 +36,7 @@ export function DeleteCampaignButton({ campaignId, campaignName }: DeleteCampaig
         pendingText="Deleting..."
         className="btn btn-danger btn-md cursor-pointer gap-1.5 rounded-[var(--radius-sm)] px-3"
       >
-        <TrashSimple size={16} />
+        <TrashSimpleIcon size={16} />
         Delete
       </SubmitButton>
     </form>

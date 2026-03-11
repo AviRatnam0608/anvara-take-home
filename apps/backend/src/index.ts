@@ -4,7 +4,7 @@ import rateLimit from 'express-rate-limit';
 import routes from './routes/index.js';
 
 const app: Application = express();
-const PORT = process.env.BACKEND_PORT || 4291;
+// const PORT = process.env.BACKEND_PORT || 4291;
 
 // Middleware
 const limiter = rateLimit({
@@ -21,7 +21,7 @@ app.use(
   cors({
     origin: process.env.BETTER_AUTH_URL || ['http://localhost:3847', 'http://127.0.0.1:3847'],
     credentials: true,
-  }),
+  })
 );
 app.use(express.json());
 

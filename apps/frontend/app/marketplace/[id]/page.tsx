@@ -4,7 +4,7 @@ import { auth } from '@/auth';
 import { getUserRole } from '@/lib/auth-helpers';
 import { serverApi } from '@/lib/server-api';
 import type { AdSlot } from '@/lib/types';
-import { ArrowLeft, SealCheck } from '@phosphor-icons/react/dist/ssr';
+import { ArrowLeftIcon, SealCheckIcon } from '@phosphor-icons/react/dist/ssr';
 import { BookingForm } from './components/booking-form';
 import { UnbookButton } from './components/unbook-button';
 
@@ -43,7 +43,7 @@ export default async function AdSlotPage({ params }: Props) {
           href="/marketplace"
           className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-primary)]"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeftIcon size={16} />
           Back to Marketplace
         </Link>
         <div className="rounded-[var(--radius-md)] border border-[var(--color-error)]/20 bg-[var(--color-error-subtle)] p-4 text-[var(--color-error)]">
@@ -60,7 +60,7 @@ export default async function AdSlotPage({ params }: Props) {
         href="/marketplace"
         className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-primary)]"
       >
-        <ArrowLeft size={16} />
+        <ArrowLeftIcon size={16} />
         Back to Marketplace
       </Link>
 
@@ -104,7 +104,7 @@ export default async function AdSlotPage({ params }: Props) {
           <div className="flex items-center gap-2">
             {adSlot.isAvailable ? (
               <>
-                <SealCheck size={20} weight="duotone" className="text-[var(--color-success)]" />
+                <SealCheckIcon size={20} weight="duotone" className="text-[var(--color-success)]" />
                 <span className="text-sm font-medium text-[var(--color-success)]">Available</span>
               </>
             ) : (

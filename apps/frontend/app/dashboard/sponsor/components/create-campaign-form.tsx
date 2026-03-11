@@ -3,7 +3,7 @@
 import { useActionState, useState, useEffect } from 'react';
 import { createCampaignAction } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
-import { Plus } from '@phosphor-icons/react';
+import { PlusIcon } from '@phosphor-icons/react';
 import type { ActionState } from '@/lib/types';
 
 const initialState: ActionState = {};
@@ -41,7 +41,7 @@ export function CreateCampaignForm() {
         onClick={() => setIsOpen(true)}
         className="btn btn-primary btn-md cursor-pointer"
       >
-        <Plus size={18} weight="bold" />
+        <PlusIcon size={18} weight="bold" />
         Add Campaign
       </button>
     );

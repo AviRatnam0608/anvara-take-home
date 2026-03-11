@@ -1,14 +1,15 @@
 import Link from 'next/link';
+import type { ComponentType } from 'react';
 import type { AdSlot } from '@/lib/types';
 import {
-  MagnifyingGlass,
-  Monitor,
-  VideoCamera,
-  Article,
-  EnvelopeSimple,
-  Microphone,
+  MagnifyingGlassIcon,
+  MonitorIcon,
+  VideoCameraIcon,
+  ArticleIcon,
+  EnvelopeSimpleIcon,
+  MicrophoneIcon,
 } from '@phosphor-icons/react/dist/ssr';
-import type { Icon } from '@phosphor-icons/react/dist/ssr';
+import type { IconProps } from '@phosphor-icons/react';
 
 const typeColors: Record<string, string> = {
   DISPLAY: 'bg-[var(--color-primary-subtle)] text-[var(--color-primary)]',
@@ -18,12 +19,12 @@ const typeColors: Record<string, string> = {
   PODCAST: 'bg-[var(--color-warning-subtle)] text-[var(--color-warning)]',
 };
 
-const typeIcons: Record<string, Icon> = {
-  DISPLAY: Monitor,
-  VIDEO: VideoCamera,
-  NATIVE: Article,
-  NEWSLETTER: EnvelopeSimple,
-  PODCAST: Microphone,
+const typeIcons: Record<string, ComponentType<IconProps>> = {
+  DISPLAY: MonitorIcon,
+  VIDEO: VideoCameraIcon,
+  NATIVE: ArticleIcon,
+  NEWSLETTER: EnvelopeSimpleIcon,
+  PODCAST: MicrophoneIcon,
 };
 
 interface AdSlotGridProps {
@@ -38,12 +39,14 @@ export function AdSlotGrid({ adSlots, page, totalPages, filterParams }: AdSlotGr
   if (adSlots.length === 0) {
     return (
       <div className="empty-state-card">
-        <MagnifyingGlass
+        <MagnifyingGlassIcon
           size={48}
           weight="duotone"
           className="mx-auto mb-4 text-[var(--color-text-muted)]"
         />
-        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">No ad slots found</h3>
+        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
+          No ad slots found
+        </h3>
         <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
           There are no available ad slots matching your criteria. Try adjusting your filters.
         </p>
@@ -65,7 +68,9 @@ export function AdSlotGrid({ adSlots, page, totalPages, filterParams }: AdSlotGr
               <div className="mb-3 flex items-start justify-between gap-3">
                 <div className="flex items-center gap-2.5">
                   {TypeIcon && (
-                    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${typeColors[slot.type] || ''}`}>
+                    <span
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${typeColors[slot.type] || ''}`}
+                    >
                       <TypeIcon size={18} weight="duotone" />
                     </span>
                   )}
@@ -81,7 +86,9 @@ export function AdSlotGrid({ adSlots, page, totalPages, filterParams }: AdSlotGr
               </div>
 
               {slot.publisher && (
-                <p className="mb-2 text-sm text-[var(--color-text-muted)]">by {slot.publisher.name}</p>
+                <p className="mb-2 text-sm text-[var(--color-text-muted)]">
+                  by {slot.publisher.name}
+                </p>
               )}
 
               {slot.description && (
@@ -96,7 +103,13 @@ export function AdSlotGrid({ adSlots, page, totalPages, filterParams }: AdSlotGr
                     className={`inline-block h-2 w-2 rounded-full ${slot.isAvailable ? 'bg-[var(--color-success)]' : 'bg-[var(--color-text-muted)]'}`}
                     aria-hidden="true"
                   />
-                  <span className={slot.isAvailable ? 'text-[var(--color-success)]' : 'text-[var(--color-text-muted)]'}>
+                  <span
+                    className={
+                      slot.isAvailable
+                        ? 'text-[var(--color-success)]'
+                        : 'text-[var(--color-text-muted)]'
+                    }
+                  >
                     {slot.isAvailable ? 'Available' : 'Booked'}
                   </span>
                 </span>

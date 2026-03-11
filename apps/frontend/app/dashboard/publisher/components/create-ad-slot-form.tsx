@@ -3,7 +3,7 @@
 import { useActionState, useState, useEffect } from 'react';
 import { createAdSlotAction } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
-import { Plus } from '@phosphor-icons/react';
+import { PlusIcon } from '@phosphor-icons/react';
 import type { ActionState, AdSlot } from '@/lib/types';
 
 const AD_SLOT_TYPES: AdSlot['type'][] = ['DISPLAY', 'VIDEO', 'NATIVE', 'NEWSLETTER', 'PODCAST'];
@@ -31,7 +31,7 @@ export function CreateAdSlotForm() {
         onClick={() => setIsOpen(true)}
         className="btn btn-primary btn-md cursor-pointer"
       >
-        <Plus size={18} weight="bold" />
+        <PlusIcon size={18} weight="bold" />
         Add Ad Slot
       </button>
     );

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { headers } from 'next/headers';
 import { auth } from '@/auth';
 import { getUserRole } from '@/lib/auth-helpers';
-import { Hexagon } from '@phosphor-icons/react/dist/ssr';
+import { HexagonIcon } from '@phosphor-icons/react/dist/ssr';
 import { LogoutButton } from './logout-button';
 import { MobileNav } from './mobile-nav';
 
@@ -24,7 +24,7 @@ export async function Nav() {
       <nav className="container-nav">
         {/* Brand */}
         <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-[var(--color-primary)]">
-          <Hexagon size={28} weight="duotone" />
+          <HexagonIcon size={28} weight="duotone" />
           Anvara
         </Link>
 

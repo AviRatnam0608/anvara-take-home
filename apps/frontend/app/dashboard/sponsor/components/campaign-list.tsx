@@ -1,5 +1,5 @@
 import type { Campaign } from '@/lib/types';
-import { Megaphone } from '@phosphor-icons/react/dist/ssr';
+import { MegaphoneIcon } from '@phosphor-icons/react/dist/ssr';
 import { CampaignCard } from './campaign-card';
 
 interface CampaignListProps {
@@ -10,7 +10,7 @@ export function CampaignList({ campaigns }: CampaignListProps) {
   if (campaigns.length === 0) {
     return (
       <div className="empty-state-card">
-        <Megaphone
+        <MegaphoneIcon
           size={48}
           weight="duotone"
           className="mx-auto mb-4 text-[var(--color-text-muted)]"

@@ -3,7 +3,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { authClient } from '@/auth-client';
-import { Megaphone, Layout, CircleNotch, User } from '@phosphor-icons/react';
+import { MegaphoneIcon, LayoutIcon, CircleNotchIcon, UserIcon } from '@phosphor-icons/react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
 
@@ -64,7 +64,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md auth-card">
         {/* Header */}
         <div className="mb-8 text-center">
-          <User size={48} weight="duotone" className="mx-auto mb-3 text-[var(--color-primary)]" />
+          <UserIcon size={48} weight="duotone" className="mx-auto mb-3 text-[var(--color-primary)]" />
           <h1 className="text-2xl font-bold">Login to Anvara</h1>
           <p className="mt-1 text-sm text-[var(--color-text-secondary)]">Select a role to continue</p>
         </div>
@@ -92,7 +92,7 @@ export default function LoginPage() {
                 }`}
                 aria-pressed={role === 'sponsor'}
               >
-                <Megaphone
+                <MegaphoneIcon
                   size={28}
                   weight="duotone"
                   className={
@@ -117,7 +117,7 @@ export default function LoginPage() {
                 }`}
                 aria-pressed={role === 'publisher'}
               >
-                <Layout
+                <LayoutIcon
                   size={28}
                   weight="duotone"
                   className={
@@ -141,7 +141,7 @@ export default function LoginPage() {
           >
             {loading ? (
               <>
-                <CircleNotch size={18} weight="bold" className="animate-spin" />
+                <CircleNotchIcon size={18} weight="bold" className="animate-spin" />
                 Logging in...
               </>
             ) : (

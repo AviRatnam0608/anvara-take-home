@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import type { AdSlot } from '@/lib/types';
-import { PencilSimple } from '@phosphor-icons/react';
+import { PencilSimpleIcon } from '@phosphor-icons/react';
 import { EditAdSlotForm } from './edit-ad-slot-form';
 import { DeleteAdSlotButton } from './delete-ad-slot-button';
 
@@ -64,7 +64,7 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
             onClick={() => setIsEditing(true)}
             className="btn btn-md cursor-pointer gap-1.5 rounded-[var(--radius-sm)] px-3 text-[var(--color-primary)] hover:bg-[var(--color-primary-subtle)]"
           >
-            <PencilSimple size={16} />
+            <PencilSimpleIcon size={16} />
             Edit
           </button>
           <DeleteAdSlotButton adSlotId={adSlot.id} adSlotName={adSlot.name} />

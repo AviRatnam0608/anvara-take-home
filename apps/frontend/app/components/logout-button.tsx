@@ -1,7 +1,7 @@
 'use client';
 
 import { authClient } from '@/auth-client';
-import { SignOut } from '@phosphor-icons/react';
+import { SignOutIcon } from '@phosphor-icons/react';
 
 export function LogoutButton() {
   return (
@@ -18,7 +18,7 @@ export function LogoutButton() {
       className="btn btn-ghost btn-md"
       aria-label="Sign out"
     >
-      <SignOut size={16} />
+      <SignOutIcon size={16} />
       Logout
     </button>
   );

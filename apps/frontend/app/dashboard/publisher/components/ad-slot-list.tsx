@@ -1,5 +1,5 @@
 import type { AdSlot } from '@/lib/types';
-import { Layout } from '@phosphor-icons/react/dist/ssr';
+import { LayoutIcon } from '@phosphor-icons/react/dist/ssr';
 import { AdSlotCard } from './ad-slot-card';
 
 interface AdSlotListProps {
@@ -10,7 +10,7 @@ export function AdSlotList({ adSlots }: AdSlotListProps) {
   if (adSlots.length === 0) {
     return (
       <div className="empty-state-card">
-        <Layout
+        <LayoutIcon
           size={48}
           weight="duotone"
           className="mx-auto mb-4 text-[var(--color-text-muted)]"

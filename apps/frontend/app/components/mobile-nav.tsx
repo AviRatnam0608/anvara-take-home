@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { List, X, Storefront, Megaphone, Layout } from '@phosphor-icons/react';
+import { ListIcon, XIcon, StorefrontIcon, MegaphoneIcon, LayoutIcon } from '@phosphor-icons/react';
 import { LogoutButton } from './logout-button';
 
 interface MobileNavProps {
@@ -45,7 +45,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
         aria-label="Open menu"
         aria-expanded={isOpen}
       >
-        <List size={28} />
+        <ListIcon size={28} />
       </button>
 
       {/* Overlay + Sidebar */}
@@ -73,7 +73,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
                 className="btn btn-ghost min-h-[44px] min-w-[44px] rounded-[var(--radius-sm)] justify-center"
                 aria-label="Close menu"
               >
-                <X size={24} />
+                <XIcon size={24} />
               </button>
             </div>
 
@@ -83,7 +83,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
                 href="/marketplace"
                 className="btn btn-ghost w-full justify-start gap-3 rounded-[var(--radius-md)] px-4 py-3 text-base font-medium"
               >
-                <Storefront size={20} />
+                <StorefrontIcon size={20} />
                 Marketplace
               </Link>
 
@@ -92,7 +92,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
                   href="/dashboard/sponsor"
                   className="btn btn-ghost w-full justify-start gap-3 rounded-[var(--radius-md)] px-4 py-3 text-base font-medium"
                 >
-                  <Megaphone size={20} />
+                  <MegaphoneIcon size={20} />
                   My Campaigns
                 </Link>
               )}
@@ -102,7 +102,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
                   href="/dashboard/publisher"
                   className="btn btn-ghost w-full justify-start gap-3 rounded-[var(--radius-md)] px-4 py-3 text-base font-medium"
                 >
-                  <Layout size={20} />
+                  <LayoutIcon size={20} />
                   My Ad Slots
                 </Link>
               )}

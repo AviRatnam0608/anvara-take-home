@@ -1,7 +1,7 @@
 'use client';
 
 import { useFormStatus } from 'react-dom';
-import { CircleNotch } from '@phosphor-icons/react';
+import { CircleNotchIcon } from '@phosphor-icons/react';
 
 import type { ReactNode } from 'react';
 
@@ -32,7 +32,7 @@ export function SubmitButton({ children, pendingText, className }: SubmitButtonP
     >
       {pending ? (
         <>
-          <CircleNotch size={16} weight="bold" className="animate-spin" />
+          <CircleNotchIcon size={16} weight="bold" className="animate-spin" />
           {pendingText ?? 'Saving...'}
         </>
       ) : (

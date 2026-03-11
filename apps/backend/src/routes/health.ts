@@ -18,6 +18,7 @@ router.get('/', async (_req: Request, res: Response) => {
       status: 'error',
       timestamp: new Date().toISOString(),
       database: 'disconnected',
+      error: error,
     });
   }
 });

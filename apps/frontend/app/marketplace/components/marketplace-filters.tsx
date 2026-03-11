@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useTransition } from 'react';
-import { MagnifyingGlass } from '@phosphor-icons/react';
+import { MagnifyingGlassIcon } from '@phosphor-icons/react';
 
 const AD_SLOT_TYPES = ['DISPLAY', 'VIDEO', 'NATIVE', 'NEWSLETTER', 'PODCAST'] as const;
 
@@ -45,7 +45,7 @@ export function MarketplaceFilters() {
       {/* Search + Type row */}
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
-          <MagnifyingGlass
+          <MagnifyingGlassIcon
             size={18}
             className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]"
           />
