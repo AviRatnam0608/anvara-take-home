@@ -182,6 +182,10 @@
     0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
+.modal-content.request-form {
+  max-height: 80vh;
+}
+
 /* ─── Component Classes ───────────────────────────────────────────
  *  Placed in @layer components so Tailwind utility classes applied
  *  via className can override these defaults (utilities layer > components layer).

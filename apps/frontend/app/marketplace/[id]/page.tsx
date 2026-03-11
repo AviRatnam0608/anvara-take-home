@@ -4,8 +4,15 @@ import { auth } from '@/auth';
 import { getUserRole } from '@/lib/auth-helpers';
 import { serverApi } from '@/lib/server-api';
 import type { AdSlot } from '@/lib/types';
-import { ArrowLeftIcon, SealCheckIcon } from '@phosphor-icons/react/dist/ssr';
+import {
+  ArrowLeftIcon,
+  ClockIcon,
+  EyeIcon,
+  SealCheckIcon,
+  ShieldCheckIcon,
+} from '@phosphor-icons/react/dist/ssr';
 import { BookingForm } from './components/booking-form';
+import { RequestQuoteForm } from './components/request-quote-form';
 import { UnbookButton } from './components/unbook-button';
 
 const typeColors: Record<string, string> = {
@@ -30,10 +37,12 @@ export default async function AdSlotPage({ params }: Props) {
 
   let role: 'sponsor' | 'publisher' | null = null;
   let sponsorName: string | undefined;
+  let userEmail: string | undefined;
   if (user?.id) {
     const roleData = await getUserRole(user.id);
     role = roleData.role;
     sponsorName = roleData.name ?? user.name ?? undefined;
+    userEmail = user.email ?? undefined;
   }
 
   if (error || !adSlot) {
@@ -100,6 +109,34 @@ export default async function AdSlotPage({ params }: Props) {
           </p>
         )}
 
+        <div className="mb-6 grid gap-3 sm:grid-cols-3">
+          <div className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-2 text-sm">
+            <ShieldCheckIcon size={16} className="text-[var(--color-success)]" />
+            Verified publisher profile
+          </div>
+          <div className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-2 text-sm">
+            <ClockIcon size={16} className="text-[var(--color-primary)]" />
+            Typical response under 48 hours
+          </div>
+          <div className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-2 text-sm">
+            <EyeIcon size={16} className="text-[var(--color-warning)]" />
+            {adSlot.publisher?.monthlyViews
+              ? `${Number(adSlot.publisher.monthlyViews).toLocaleString()} monthly views`
+              : 'Audience metrics available on request'}
+          </div>
+        </div>
+
+        <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-subtle)] p-4">
+          <h2 className="text-base font-semibold text-[var(--color-text-primary)]">
+            Why brands choose this placement
+          </h2>
+          <ul className="mt-2 space-y-1 text-sm text-[var(--color-text-secondary)]">
+            <li>Direct publisher partnership and faster activation.</li>
+            <li>Clear monthly pricing with no hidden platform fees.</li>
+            <li>Custom packages available for compliance and procurement needs.</li>
+          </ul>
+        </div>
+
         <div className="flex items-center justify-between border-t border-[var(--color-border)] pt-5">
           <div className="flex items-center gap-2">
             {adSlot.isAvailable ? (
@@ -136,20 +173,26 @@ export default async function AdSlotPage({ params }: Props) {
             <BookingForm adSlotId={adSlot.id} sponsorName={sponsorName} />
           ) : (
             <div className="mt-6 border-t border-[var(--color-border)] pt-6">
-              <h2 className="mb-4 text-xl font-semibold">Request This Placement</h2>
-              <button
-                disabled
-                className="min-h-[48px] w-full cursor-not-allowed rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-input)] px-4 py-3 font-semibold text-[var(--color-text-muted)]"
-              >
-                Request This Placement
-              </button>
-              <p className="mt-3 text-center text-sm text-[var(--color-text-muted)]">
+              <h2 className="mb-3 text-xl font-semibold">Instant booking is sponsor-only</h2>
+              <p className="text-sm text-[var(--color-text-secondary)]">
                 {user
-                  ? 'Only sponsors can request placements'
-                  : 'Log in as a sponsor to request this placement'}
+                  ? 'Switch to a sponsor account to book immediately.'
+                  : 'Create or log into a sponsor account to book this slot now.'}
               </p>
+              <Link href="/login" className="btn btn-secondary btn-md mt-4 w-full cursor-pointer">
+                Log In to Book
+              </Link>
             </div>
           ))}
+
+        {adSlot.isAvailable && (
+          <RequestQuoteForm
+            adSlotId={adSlot.id}
+            adSlotName={adSlot.name}
+            defaultCompanyName={role === 'sponsor' ? sponsorName : undefined}
+            defaultEmail={userEmail}
+          />
+        )}
       </div>
     </div>
   );

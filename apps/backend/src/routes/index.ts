@@ -7,6 +7,7 @@ import campaignsRoutes from './campaigns.js';
 import adSlotsRoutes from './adSlots.js';
 import placementsRoutes from './placements.js';
 import dashboardRoutes from './dashboard.js';
+import quotesRoutes from './quotes.js';
 import healthRoutes from './health.js';
 
 const router: IRouter = Router();
@@ -23,5 +24,6 @@ router.use('/campaigns', authMiddleware, campaignsRoutes);
 router.use('/ad-slots', optionalAuthMiddleware, adSlotsRoutes);
 router.use('/placements', authMiddleware, placementsRoutes);
 router.use('/dashboard', authMiddleware, dashboardRoutes);
+router.use('/quotes', optionalAuthMiddleware, quotesRoutes);
 
 export default router;

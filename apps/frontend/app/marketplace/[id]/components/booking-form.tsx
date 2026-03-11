@@ -4,6 +4,7 @@ import { useActionState } from 'react';
 import { bookAdSlotAction } from '../actions';
 import { unbookAdSlotAction } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
+import { trackMarketplaceEvent } from '@/lib/marketplace-analytics';
 import type { ActionState } from '@/lib/types';
 
 const initialState: ActionState = {};
@@ -43,22 +44,24 @@ export function BookingForm({ adSlotId, sponsorName }: BookingFormProps) {
   return (
     <div className="mt-6 border-t border-[var(--color-border)] pt-6">
       <h2 className="mb-4 text-xl font-semibold">Request This Placement</h2>
+      <p className="mb-4 text-sm text-[var(--color-text-secondary)]">
+        Fast-track booking for immediate launch. No hidden platform fees.
+      </p>
 
-      <form action={bookAction} className="space-y-4">
+      <form
+        action={bookAction}
+        className="space-y-4"
+        onSubmit={() => trackMarketplaceEvent('marketplace_book_submit', { adSlotId })}
+      >
         <input type="hidden" name="adSlotId" value={adSlotId} />
 
         <div>
-          <label className="form-label">
-            Your Company
-          </label>
+          <label className="form-label">Your Company</label>
           <p className="font-medium text-[var(--color-text-primary)]">{sponsorName}</p>
         </div>
 
         <div>
-          <label
-            htmlFor="message"
-            className="form-label"
-          >
+          <label htmlFor="message" className="form-label">
             Message to Publisher (optional)
           </label>
           <textarea
@@ -69,9 +72,7 @@ export function BookingForm({ adSlotId, sponsorName }: BookingFormProps) {
           />
         </div>
 
-        {bookState.error && (
-          <p className="text-sm text-[var(--color-error)]">{bookState.error}</p>
-        )}
+        {bookState.error && <p className="text-sm text-[var(--color-error)]">{bookState.error}</p>}
 
         <SubmitButton
           pendingText="Booking..."
