@@ -36,6 +36,14 @@ export const baseConfig = [
       'no-console': 'warn',
     },
   },
+  {
+    // `no-undef` doesn't understand TypeScript type/global declarations (e.g. `process`, `RequestInit`).
+    // TypeScript handles this via `tsconfig` + `@typescript-eslint` rules.
+    files: ['**/*.{ts,tsx}'],
+    rules: {
+      'no-undef': 'off',
+    },
+  },
   prettierConfig,
 ];
 
@@ -66,6 +74,14 @@ export const reactConfig = [
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'error',
       'no-console': 'warn',
+    },
+  },
+  {
+    // `no-undef` doesn't understand TypeScript type/global declarations (e.g. `process`, `RequestInit`).
+    // TypeScript handles this via `tsconfig` + `@typescript-eslint` rules.
+    files: ['**/*.{ts,tsx}'],
+    rules: {
+      'no-undef': 'off',
     },
   },
   {

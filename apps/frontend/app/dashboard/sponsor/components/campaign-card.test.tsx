@@ -62,8 +62,7 @@ describe('CampaignCard', () => {
   });
 
   it('does not render description when absent', () => {
-    const { description: _unused, ...noDesc } = baseCampaign;
-    render(<CampaignCard campaign={noDesc} />);
+    render(<CampaignCard campaign={{ ...baseCampaign, description: undefined }} />);
     expect(screen.queryByText('Launch campaign for our new product')).not.toBeInTheDocument();
   });
 

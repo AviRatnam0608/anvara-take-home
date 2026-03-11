@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState, useEffect } from 'react';
+import { useActionState, useEffect } from 'react';
 import { updateCampaignAction } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
 import type { ActionState, Campaign } from '@/lib/types';

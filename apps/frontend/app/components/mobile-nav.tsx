@@ -20,6 +20,7 @@ export function MobileNav({ user, role }: MobileNavProps) {
   useEffect(() => {
     if (prevPathname.current !== pathname) {
       prevPathname.current = pathname;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsOpen(false);
     }
   }, [pathname]);

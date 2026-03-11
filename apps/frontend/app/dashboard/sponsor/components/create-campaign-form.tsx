@@ -22,6 +22,7 @@ export function CreateCampaignForm() {
   // Close modal and reset form on success
   useEffect(() => {
     if (state.success) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsOpen(false);
       setName('');
       setDescription('');
